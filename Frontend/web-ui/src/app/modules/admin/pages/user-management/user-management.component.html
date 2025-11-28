@@ -1,1 +1,150 @@
-<p>user-management works!</p>
+<div class="um-root">
+	<header class="um-header">
+		<div>
+			<h2>User Management <span class="muted">(Admin)</span></h2>
+		</div>
+		<div class="um-actions">
+			<input type="text" placeholder="Search by name or email" [(ngModel)]="searchTerm" class="search" />
+			<div class="role-tabs">
+				<button class="tab" [class.active]="roleFilter === 'Admin'" (click)="setRoleFilter('Admin')">Admin ({{ countByRole('Admin') }})</button>
+				<button class="tab" [class.active]="roleFilter === 'Student'" (click)="setRoleFilter('Student')">Student ({{ countByRole('Student') }})</button>
+				<button class="tab" [class.active]="roleFilter === 'Faculty'" (click)="setRoleFilter('Faculty')">Faculty ({{ countByRole('Faculty') }})</button>
+			</div>
+			<div class="add-buttons">
+				<button class="btn primary" (click)="openAddCurrent()">+ Add {{ roleFilter }}</button>
+			</div>
+		</div>
+	</header>
+
+	<section class="um-table panel">
+		<table>
+			<thead>
+				<tr *ngIf="roleFilter === 'Student'">
+					<th>Name</th>
+					<th>Email</th>
+					<th>Semester</th>
+					<th>Status</th>
+					<th>Activity</th>
+					<th class="actions">Actions</th>
+				</tr>
+				<tr *ngIf="roleFilter === 'Faculty'">
+					<th>Name</th>
+					<th>Email</th>
+					<th>Subject</th>
+					<th>Status</th>
+					<th class="actions">Actions</th>
+				</tr>
+				<tr *ngIf="roleFilter === 'Admin'">
+					<th>Name</th>
+					<th>Email</th>
+					<th>Roles</th>
+					<th>Status</th>
+					<th class="actions">Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+				<ng-container *ngIf="roleFilter === 'Student'">
+					<tr *ngFor="let u of filteredUsers">
+						<td>{{ u.name }}</td>
+						<td>{{ u.email }}</td>
+						<td>{{ u.semester || '-' }}</td>
+						<td>{{ u.status }}</td>
+						<td>{{ u.activity || '-' }}</td>
+						<td class="actions">
+							<button class="btn small" (click)="openEdit(u)">Edit</button>
+							<button class="btn small danger" (click)="deleteUser(u.id)">Delete</button>
+						</td>
+						</tr>
+				</ng-container>
+				<ng-container *ngIf="roleFilter === 'Faculty'">
+					<tr *ngFor="let u of filteredUsers">
+						<td>{{ u.name }}</td>
+						<td>{{ u.email }}</td>
+						<td>{{ u.subject || '-' }}</td>
+						<td>{{ u.status }}</td>
+						<td class="actions">
+							<button class="btn small" (click)="openEdit(u)">Edit</button>
+							<button class="btn small danger" (click)="deleteUser(u.id)">Delete</button>
+						</td>
+					</tr>
+				</ng-container>
+				<ng-container *ngIf="roleFilter === 'Admin'">
+					<tr *ngFor="let u of filteredUsers">
+						<td>{{ u.name }}</td>
+						<td>{{ u.email }}</td>
+						<td>{{ u.roles.join(', ') }}</td>
+						<td>{{ u.status }}</td>
+						<td class="actions">
+							<button class="btn small" (click)="openEdit(u)">Edit</button>
+							<button class="btn small danger" (click)="deleteUser(u.id)">Delete</button>
+						</td>
+					</tr>
+				</ng-container>
+				<tr *ngIf="filteredUsers.length === 0">
+					<td colspan="6" class="muted">No users found.</td>
+				</tr>
+			</tbody>
+		</table>
+	</section>
+
+	<div class="um-modal" *ngIf="showForm">
+		<div class="um-modal-backdrop" (click)="closeForm()"></div>
+		<div class="um-modal-card">
+			<h3>{{ modalTitle }}</h3>
+			<div *ngIf="currentAddRole === 'Admin' || (editing && tempUser.roles?.includes('Admin'))" class="form-row">
+				<label>Name</label>
+				<input [(ngModel)]="tempUser.name" placeholder="Full name" />
+			</div>
+			<div *ngIf="currentAddRole === 'Admin' || (editing && tempUser.roles?.includes('Admin'))" class="form-row">
+				<label>Email</label>
+				<input [(ngModel)]="tempUser.email" placeholder="user@example.com" />
+			</div>
+
+			<div *ngIf="currentAddRole === 'Student' || (editing && tempUser.roles?.includes('Student'))" class="form-row">
+				<label>Name</label>
+				<input [(ngModel)]="tempUser.name" placeholder="Full name" />
+			</div>
+			<div *ngIf="currentAddRole === 'Student' || (editing && tempUser.roles?.includes('Student'))" class="form-row">
+				<label>Email</label>
+				<input [(ngModel)]="tempUser.email" placeholder="user@example.com" />
+			</div>
+			<div *ngIf="currentAddRole === 'Student' || (editing && tempUser.roles?.includes('Student'))" class="form-row">
+				<label>Semester</label>
+				<select [(ngModel)]="tempUser.semester">
+					<option *ngFor="let n of [1,2,3,4,5,6,7,8]" [ngValue]="n">Semester {{ n }}</option>
+				</select>
+			</div>
+			<div *ngIf="currentAddRole === 'Student' || (editing && tempUser.roles?.includes('Student'))" class="form-row">
+				<label>Status</label>
+				<select [(ngModel)]="tempUser.status">
+					<option value="Active">Active</option>
+					<option value="Inactive">Inactive</option>
+				</select>
+			</div>
+
+			<div *ngIf="currentAddRole === 'Faculty' || (editing && tempUser.roles?.includes('Faculty'))" class="form-row">
+				<label>Name</label>
+				<input [(ngModel)]="tempUser.name" placeholder="Full name" />
+			</div>
+			<div *ngIf="currentAddRole === 'Faculty' || (editing && tempUser.roles?.includes('Faculty'))" class="form-row">
+				<label>Email</label>
+				<input [(ngModel)]="tempUser.email" placeholder="user@example.com" />
+			</div>
+			<div *ngIf="currentAddRole === 'Faculty' || (editing && tempUser.roles?.includes('Faculty'))" class="form-row">
+				<label>Subject</label>
+				<input [(ngModel)]="tempUser.subject" placeholder="e.g. Mathematics" />
+			</div>
+			<div *ngIf="currentAddRole === 'Faculty' || (editing && tempUser.roles?.includes('Faculty'))" class="form-row">
+				<label>Status</label>
+				<select [(ngModel)]="tempUser.status">
+					<option value="Active">Active</option>
+					<option value="Inactive">Inactive</option>
+				</select>
+			</div>
+			<div class="form-actions">
+				<button class="btn" (click)="closeForm()">Cancel</button>
+				<button class="btn primary" (click)="saveUser()">{{ editing ? 'Save Changes' : 'Create User' }}</button>
+			</div>
+		</div>
+	</div>
+</div>
