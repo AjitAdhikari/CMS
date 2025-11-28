@@ -3,21 +3,23 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { AdminSidebarComponent } from './modules/admin/components/admin-sidebar/admin-sidebar.component';
+import { HeaderModule } from './modules/admin/components/header/header.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { InventoryModule } from './modules/inventory/inventory.module';
-import { MemberModule } from './modules/member/member.module';
 import { LayoutModule } from './modules/layout/layout.module';
-import { DashboardModule } from './modules/dashboard/dashboard.module';
-import { AppConfigInitService } from './appconfig.init';
-import { JwtInterceptor } from './JwtInterceptor';
+import { MemberModule } from './modules/member/member.module';
+// DashboardModule (external) removed to use admin dashboard instead
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { AppConfigInitService } from './appconfig.init';
+import { JwtInterceptor } from './JwtInterceptor';
 
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 import { ToastrModule } from 'ngx-toastr';
 import { DocumentModule } from './modules/document/document.module';
 import { FinanceModule } from './modules/finance/finance.module';
 import { SettingModule } from './modules/setting/setting.module';
-import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 
 
 
@@ -26,16 +28,18 @@ export function init_app(appLoadService: AppConfigInitService) {
 }
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    AdminSidebarComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
+    HeaderModule,
     AuthModule,
     InventoryModule,
     MemberModule,
     LayoutModule,
-    DashboardModule,
+    // DashboardModule,
     DocumentModule,
     FinanceModule,
     SettingModule,

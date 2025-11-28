@@ -1,11 +1,14 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
+import { LayoutModule } from '../layout/layout.module';
 import { AdminRoutingModule } from './admin-routing.module';
+import { HeaderModule } from './components/header/header.module';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
-import { UserManagementComponent } from './pages/user-management/user-management.component';
 import { FeeMonitoringComponent } from './pages/fee-monitoring/fee-monitoring.component';
 import { NoticeControlComponent } from './pages/notice-control/notice-control.component';
+import { UserManagementComponent } from './pages/user-management/user-management.component';
 
 
 @NgModule({
@@ -13,11 +16,15 @@ import { NoticeControlComponent } from './pages/notice-control/notice-control.co
     DashboardComponent,
     UserManagementComponent,
     FeeMonitoringComponent,
-    NoticeControlComponent
+    NoticeControlComponent,
   ],
   imports: [
     CommonModule,
-    AdminRoutingModule
+    AdminRoutingModule,
+    LayoutModule,
+    HeaderModule,
+    FormsModule
   ]
+  
 })
 export class AdminModule { }

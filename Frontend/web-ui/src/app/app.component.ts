@@ -30,4 +30,12 @@ export class AppComponent {
     // return true;
    return  TokenValidator.validateToken();
   }
+
+  isAdminRoute(): boolean{
+    try{
+      return this.router.url.startsWith('/admin');
+    }catch{
+      return false;
+    }
+  }
 }

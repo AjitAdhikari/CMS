@@ -1,0 +1,22 @@
+.admin-sidebar{
+  width:220px;
+  background:#0b1220;
+  color:#e6eef8;
+  min-height:100vh;
+  padding:1rem 0.75rem;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  align-items:center;
+}
+.brand{ width:100%; display:flex; justify-content:center; }
+.brand-link{ color:inherit; font-weight:800; text-decoration:none; display:inline-block; margin-top:12px; transform: translateY(6px); font-size:1.25rem; letter-spacing:0.6px }
+.section-title{ color:#c7d2fe; margin:0 0 0.6rem 0; font-size:0.95rem }
+.quick-list{ list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:0.4rem }
+.quick-link{ display:flex; align-items:center; gap:0.6rem; padding:0.5rem; border-radius:6px; color:inherit; text-decoration:none }
+.quick-link:hover{ background: rgba(255,255,255,0.03) }
+.ql-icon{ display:inline-flex; width:26px; height:26px; align-items:center; justify-content:center }
+.ql-label{ font-weight:600 }
+.sidebar-footer{ text-align:center; color:#94a3b8 }
+
+@media (max-width:900px){ .admin-sidebar{ display:none } }
