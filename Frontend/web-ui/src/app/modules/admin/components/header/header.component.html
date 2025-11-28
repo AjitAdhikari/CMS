@@ -1,0 +1,30 @@
+<nav class="navbar navbar-expand navbar-light navbar-bg">
+	<a class="sidebar-toggle js-sidebar-toggle">
+		<i class="hamburger align-self-center"></i>
+	</a>
+
+	<ul class="navbar-nav d-none d-lg-flex">
+	</ul>
+
+	<div class="navbar-collapse collapse">
+		<ul class="navbar-nav navbar-align">
+			<li class="nav-item date-time-nav">
+				<div class="position-relative date-time" >
+					<span class="date">{{ date }}</span>
+					<span class="time">{{ time }}</span>
+				</div>
+			</li>
+			<li class="nav-item dropdown">
+				<a class="nav-icon pe-md-0 dropdown-toggle" href="#" data-bs-toggle="dropdown">
+					<img src="/assets/images/user-avatar.png" class="avatar img-fluid rounded" alt="User">
+				</a>
+				<div class="dropdown-menu dropdown-menu-end">
+					<a class="dropdown-item" routerLink="/admin/setting">Settings</a>
+					<a class="dropdown-item" routerLink="/admin/help">Help</a>
+					<div class="dropdown-divider"></div>
+					<a class="dropdown-item" (click)="logOut()">Logout</a>
+				</div>
+			</li>
+		</ul>
+	</div>
+</nav>

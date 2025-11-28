@@ -1,0 +1,32 @@
+:root{
+	--header-bg: #ffffff;
+	--muted: #6b7280;
+	--accent: #0f172a;
+.navbar-bg{background:#fff}
+.avatar{width:36px;height:36px}
+.date-time{display:flex;flex-direction:column;align-items:flex-end;margin-right:12px}
+.date{font-size:12px;color:#666}
+.time{font-size:14px;font-weight:600}
+.profile .dropdown-menu{right:0;left:auto}
+.hamburger{width:22px;height:18px;border:2px solid #333;display:inline-block}
+.logout:hover{ background:#f8fafc }
+
+@media (max-width:800px){
+	.page-title{ display:none }
+}
+
+/* shared header styles */
+.profile-image{
+	height: 30px;
+}
+
+.date-time{
+	font-size: 15px;
+}
+
+.date-time-nav{
+	display: grid;
+	justify-content: center;
+	align-content: space-around;
+}
+}
