@@ -1,1 +1,83 @@
-<p>fee-monitoring works!</p>
+<div class="fm-root">
+	<header class="fm-header">
+		<h2>Fee Monitoring</h2>
+		<p class="lead">Track fee collection and generate downloadable reports per student.</p>
+	</header>
+
+	<section class="fm-controls panel">
+		<div class="controls-row">
+			<div>
+				<label>Select student</label>
+				<select #sel (change)="selectStudent(sel.value ? +sel.value : undefined)">
+					<option value="">-- choose student --</option>
+					<option *ngFor="let s of studentsOnly" [value]="s.id">{{ s.name }}</option>
+				</select>
+			</div>
+			<div>
+				<label>Semester</label>
+				<select [(ngModel)]="selectedSemester">
+					<option *ngFor="let sem of semesters" [ngValue]="sem">Semester {{ sem }}</option>
+				</select>
+			</div>
+			<div class="actions">
+				<button class="btn primary" (click)="generateCsvReportForSelected()">Download Report</button>
+			</div>
+		</div>
+	</section>
+
+	<section *ngIf="selectedStudent" class="fm-summary panel">
+		<h3>{{ selectedStudent.name }}</h3>
+		<div class="grid">
+			<div class="cards-row">
+				<div class="card pending">
+					<div class="label">Pending Dues</div>
+					<div class="value">{{ sumPendingFees() | currency:'USD':'symbol' }}</div>
+				</div>
+				<div class="card last">
+					<div class="label">Last Payment</div>
+					<ng-container *ngIf="lastPayment() as lp; else noLast">
+						<div class="value">{{ lp.amount | currency:'USD':'symbol' }} ({{ lp.date | date:'MMM yyyy' }})</div>
+					</ng-container>
+					<ng-template #noLast>
+						<div class="value">-</div>
+					</ng-template>
+				</div>
+				<div class="card total">
+					<div class="label">Total Paid (Year)</div>
+					<div class="value">{{ totalPaid() | currency:'USD':'symbol' }}</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section *ngIf="selectedStudent" class="fm-payments panel">
+		<h4>Payments</h4>
+		<table class="fees-table">
+			<thead>
+				<tr>
+					<th>FEE TYPE</th>
+					<th>AMOUNT</th>
+					<th>DUE DATE</th>
+					<th>STATUS</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr *ngFor="let f of pendingFeesForSelectedSemester">
+					<td>{{ f.type }}</td>
+					<td>{{ f.amount | currency:'USD':'symbol' }}</td>
+					<td [class.overdue]="f.dueDate==='Immediate'">{{ f.dueDate }}</td>
+					<td><span class="pill" [class.overdue-pill]="f.status==='Overdue'">{{ f.status }}</span></td>
+				</tr>
+				<tr *ngIf="pendingFeesForSelectedSemester.length === 0">
+					<td colspan="4" class="muted">No pending fees for this semester</td>
+				</tr>
+			</tbody>
+		</table>
+
+		<div class="cta-row">
+			<button class="btn primary large">Proceed to Online Payment</button>
+			<div class="caption muted">Integration payment system placeholder.</div>
+		</div>
+
+	</section>
+</div>
