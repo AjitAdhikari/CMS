@@ -2,9 +2,11 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
-  { path: '', redirectTo: 'admin/dashboard', pathMatch: 'full' },
+  // Default to the login page; after successful login the app navigates to the dashboard
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'admin', loadChildren: () => import('./modules/admin/admin.module').then(m => m.AdminModule) },
-  { path: '**', redirectTo: 'admin/dashboard' }
+  // Keep admin/login wildcard behavior — send unknown routes to login
+  { path: '**', redirectTo: 'login' }
 ];
 
 @NgModule({

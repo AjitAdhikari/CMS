@@ -1,0 +1,140 @@
+.notice-control-wrapper {
+    padding: 1rem;
+}
+
+.notice-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.toggle-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.toggle-btn {
+    padding: 0.5rem 0.9rem;
+    border-radius: 6px;
+    border: 1px solid #e0e0e0;
+    background: #fff;
+    cursor: pointer;
+}
+
+.toggle-btn.active {
+    background: linear-gradient(90deg, #7b2eff, #b83bff);
+    color: #fff;
+    border-color: transparent;
+}
+
+.notice-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+
+@media (min-width: 1100px) {
+	.notice-grid { grid-template-columns: 1fr 360px; }
+}
+
+
+.card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+}
+
+.card-header {
+    padding: 1rem;
+    border-bottom: 1px solid #f1f1f1;
+}
+
+.card-body {
+    padding: 1rem;
+}
+
+.field {
+    display: block;
+    margin-bottom: 0.75rem;
+}
+
+.field .label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.field input[type="text"],
+.field textarea {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #e6e6e6;
+    border-radius: 6px;
+}
+
+.actions {
+    margin-top: 0.75rem;
+}
+
+.muted {
+    color: #6b6b6b;
+}
+
+.notice-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.notice-full-row {
+    grid-column: 1 / -1;
+}
+
+.notice-item {
+    padding: 0.5rem 0;
+    border-bottom: 1px dashed #eee;
+}
+
+.existing-notices {
+    margin-top: 1rem;
+}
+
+.notice-card {
+    list-style: none;
+    padding: 0.8rem;
+    border-radius: 6px;
+    background: #fbfbfd;
+    margin-bottom: 0.6rem;
+    border: 1px solid #f0eff6;
+}
+
+.notice-meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: center;
+    margin-bottom: 0.4rem;
+}
+
+.notice-title {
+    font-size: 0.98rem;
+}
+
+.notice-date {
+    color: #8a8a8a;
+    font-size: 0.82rem;
+}
+
+.notice-body {
+    color: #222;
+    font-size: 0.95rem;
+    margin-bottom: 0.4rem;
+}
+
+.notice-attachment {
+    font-size: 0.85rem;
+    color: #4a4a4a;
+}

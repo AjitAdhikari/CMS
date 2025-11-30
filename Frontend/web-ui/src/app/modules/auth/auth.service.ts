@@ -1,17 +1,18 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { UserLoginRequestModel } from './UserLoginRequestModel';
-import { environment } from 'src/environments/environment';
+import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 import { tap } from 'rxjs';
 import StorageHelper from 'src/app/helpers/StorageHelper';
-import { ToastrService } from 'ngx-toastr';
+import { environment } from 'src/environments/environment';
+import { UserLoginRequestModel } from './UserLoginRequestModel';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  constructor(private _http : HttpClient, private _toastr: ToastrService){} //) { }
+  constructor(private _http : HttpClient, private _toastr: ToastrService, private _router: Router){} //) { }
 
   authenticate( requestModel:UserLoginRequestModel)
   {
@@ -32,8 +33,9 @@ export class AuthService {
         this._toastr.error("The username or passoword that you've entered doesn't match account", "Login Error", {progressBar:true})
          return;
        }
-       StorageHelper.setToken(response.body.token);
-       window.location.href = "/";
+      StorageHelper.setToken(response.body.token);
+      // navigate to dashboard using Angular Router so SPA state is preserved
+      this._router.navigate(['/admin/dashboard']);
       }
      );
   }

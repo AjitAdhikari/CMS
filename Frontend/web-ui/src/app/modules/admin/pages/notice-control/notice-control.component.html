@@ -1,1 +1,85 @@
-<p>notice-control works!</p>
+<div class="notice-control-wrapper">
+    <div class="notice-header">
+        <h2>Notice Center</h2>
+
+        <div class="toggle-buttons" role="tablist" aria-label="Notice views">
+            <button type="button" class="toggle-btn" [class.active]="currentView === 'admin'"
+                (click)="selectView('admin')" [attr.aria-pressed]="currentView === 'admin'">
+                Admin Notice
+            </button>
+
+            <button type="button" class="toggle-btn" [class.active]="currentView === 'university'"
+                (click)="selectView('university')" [attr.aria-pressed]="currentView === 'university'">
+                University Notice
+            </button>
+        </div>
+    </div>
+
+    <div class="notice-grid">
+        
+        <section class="notice-publish card notice-full-row" *ngIf="currentView === 'admin'">
+            <header class="card-header">
+                <h3>Admin Notice — Upload</h3>
+            </header>
+            <div class="card-body">
+                <form class="upload-form" (submit)="$event.preventDefault(); uploadAdminNotice()">
+                    <label class="field">
+                        <span class="label">Title</span>
+                        <input type="text" [(ngModel)]="adminNotice.title" name="title" placeholder="Notice title" />
+                    </label>
+
+                    <label class="field">
+                        <span class="label">Content</span>
+                        <textarea rows="5" [(ngModel)]="adminNotice.content" name="content"
+                            placeholder="Full notice content"></textarea>
+                    </label>
+
+                    <label class="field">
+                        <span class="label">Attachment (optional)</span>
+                        <input type="file" (change)="onFileSelected($event)" />
+                    </label>
+
+                    <div class="actions">
+                        <button type="submit" class="btn btn-primary">Upload Notice</button>
+                    </div>
+                </form>
+
+                
+            </div>
+        </section>
+
+        <aside class="university-notices card notice-full-row" *ngIf="currentView === 'university'">
+            <header class="card-header">
+                <h3>University Notices</h3>
+            </header>
+            <div class="card-body">
+                <p class="muted">University-wide announcements, policies, events, and emergency notices.</p>
+
+                <ul class="notice-list">
+                    <li class="notice-item">No university notices available — add one to show here.</li>
+                </ul>
+
+                <div class="actions">
+                    <button type="button" class="btn btn-secondary">Refresh Notices</button>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <div class="existing-notices notice-full-row card" *ngIf="notices && notices.length">
+        <div class="card-body">
+            <h4>Existing Notices</h4>
+            <ul class="notice-list">
+                <li class="notice-card" *ngFor="let notice of notices">
+                    <div class="notice-meta">
+                        <strong class="notice-title">{{ notice.title }}</strong>
+                        <span class="notice-date">{{ notice.createdAt | date:'short' }}</span>
+                    </div>
+                    <div class="notice-body">{{ notice.content }}</div>
+                    <div class="notice-attachment" *ngIf="notice.fileName">Attachment: {{ notice.fileName }}</div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+</div>
