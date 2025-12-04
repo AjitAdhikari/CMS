@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { LayoutModule } from '../layout/layout.module';
 import { AdminRoutingModule } from './admin-routing.module';
 import { HeaderModule } from './components/header/header.module';
+import { AddCoursesComponent } from './pages/add-courses/add-courses.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { FeeMonitoringComponent } from './pages/fee-monitoring/fee-monitoring.component';
 import { NoticeControlComponent } from './pages/notice-control/notice-control.component';
@@ -17,6 +18,7 @@ import { UserManagementComponent } from './pages/user-management/user-management
     UserManagementComponent,
     FeeMonitoringComponent,
     NoticeControlComponent,
+    AddCoursesComponent,
   ],
   imports: [
     CommonModule,
