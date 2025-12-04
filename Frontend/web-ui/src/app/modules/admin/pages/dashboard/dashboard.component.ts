@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Course, CourseService } from 'src/app/services/course.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -6,5 +7,10 @@ import { Component } from '@angular/core';
   styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent {
+  recentCourses: Course[] = [];
+
+  constructor(private courseService: CourseService) {
+    this.recentCourses = this.courseService.getCourses().slice(0,5);
+  }
 
 }
