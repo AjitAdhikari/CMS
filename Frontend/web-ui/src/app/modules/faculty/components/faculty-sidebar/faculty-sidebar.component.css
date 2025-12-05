@@ -78,3 +78,42 @@
     display: none
   }
 }
+
+/* Faculty sidebar: mirror admin styles and add active state */
+.faculty-sidebar {
+  width: 220px;
+  background: #0b1220;
+  color: #e6eef8;
+  min-height: 100vh;
+  padding: 1rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.faculty-sidebar .brand {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.faculty-sidebar .brand-link {
+  color: inherit;
+  font-weight: 800;
+  text-decoration: none;
+  display: inline-block;
+  margin-top: 12px;
+  transform: translateY(6px);
+  font-size: 1.25rem;
+  letter-spacing: 0.6px;
+}
+
+.faculty-sidebar .quick-link.active {
+  background: rgba(79, 70, 229, 0.12);
+  color: #c7d2fe;
+}
+
+.faculty-sidebar .quick-link.active .ql-icon svg * {
+  stroke: currentColor !important;
+}
