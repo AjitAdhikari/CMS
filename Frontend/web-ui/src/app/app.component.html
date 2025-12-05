@@ -1,10 +1,11 @@
 <div class="wrapper">
   <app-admin-sidebar *ngIf="isLoggedIn() && isAdminRoute()"></app-admin-sidebar>
+  <app-faculty-sidebar *ngIf="isLoggedIn() && isFacultyRoute()"></app-faculty-sidebar>
   <div class="main">
-  <app-header *ngIf="isLoggedIn() && isAdminRoute()"></app-header>
+    <app-header *ngIf="isLoggedIn() && (isAdminRoute() || isFacultyRoute())"></app-header>
     <main class="content">
-        <router-outlet></router-outlet>
+      <router-outlet></router-outlet>
     </main>
-    <app-footer *ngIf="isLoggedIn() && isAdminRoute()"></app-footer>
+    <app-footer *ngIf="isLoggedIn() && (isAdminRoute() || isFacultyRoute())"></app-footer>
   </div>
 </div>

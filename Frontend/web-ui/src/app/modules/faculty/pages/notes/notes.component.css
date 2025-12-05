@@ -1,0 +1,11 @@
+.uploaded-list {
+	margin-top: 1rem;
+}
+
+.uploaded-list .list-group-item {
+	word-break: break-word;
+}
+
+.uploaded-list .small {
+	margin-top: 0.25rem;
+}

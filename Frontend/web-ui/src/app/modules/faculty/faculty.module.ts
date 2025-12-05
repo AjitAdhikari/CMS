@@ -1,0 +1,29 @@
+import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
+import { FacultyRoutingModule } from './faculty-routing.module';
+
+import { AssignmentsComponent } from './pages/assignments/assignments.component';
+import { DashboardComponent } from './pages/dashboard/dashboard.component';
+import { GradesComponent } from './pages/grades/grades.component';
+import { NotesComponent } from './pages/notes/notes.component';
+import { NoticesComponent } from './pages/notices/notices.component';
+
+@NgModule({
+  declarations: [
+    DashboardComponent,
+    AssignmentsComponent,
+    GradesComponent,
+    NoticesComponent,
+    NotesComponent,
+  ],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    FacultyRoutingModule
+  ],
+  exports: []
+})
+export class FacultyModule { }

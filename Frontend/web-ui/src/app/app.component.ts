@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-// import { ToastrService } from 'ngx-toastr';
 import { TokenValidator } from './helpers/TokenValidator';
 
 @Component({
@@ -10,31 +9,36 @@ import { TokenValidator } from './helpers/TokenValidator';
 })
 export class AppComponent {
   title = 'adminpanel';
-  constructor(private router: Router){}
+  constructor(private router: Router) { }
 
-  ngOnInit() :void
-  {
+  ngOnInit(): void {
     this.reloadToLogin();
   }
 
-  reloadToLogin() : any
-  {
+  reloadToLogin(): any {
     let isValidate = TokenValidator.validateToken();
-    if(!isValidate)
-    {
+    if (!isValidate) {
       this.router.navigate(['/login']);
     }
   }
 
   isLoggedIn(): boolean {
     // return true;
-   return  TokenValidator.validateToken();
+    return TokenValidator.validateToken();
   }
 
-  isAdminRoute(): boolean{
-    try{
+  isAdminRoute(): boolean {
+    try {
       return this.router.url.startsWith('/admin');
-    }catch{
+    } catch {
+      return false;
+    }
+  }
+
+  isFacultyRoute(): boolean {
+    try {
+      return this.router.url.startsWith('/faculty');
+    } catch {
       return false;
     }
   }
