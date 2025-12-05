@@ -1,0 +1,288 @@
+.assignments-card {
+	background: #fff;
+	border-radius: 12px;
+	padding: 28px;
+	box-shadow: 0 6px 18px rgba(24, 39, 75, 0.06);
+	border: 1px solid rgba(16, 24, 40, 0.04);
+}
+
+.assignments-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 16px;
+}
+
+.assignments-header h2 {
+	margin: 0;
+	font-size: 22px;
+	color: #111827;
+}
+
+.upload-btn {
+	background: #10B981;
+	color: white;
+	border: none;
+	padding: 10px 18px;
+	border-radius: 8px;
+	font-weight: 600;
+	cursor: pointer;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	user-select: none;
+}
+
+.upload-btn[dragover] {
+	outline: 2px dashed rgba(255, 255, 255, 0.35);
+}
+
+.muted {
+	color: #6B7280;
+	margin: 12px 0 18px 0;
+}
+
+.divider {
+	height: 1px;
+	background: linear-gradient(90deg, rgba(0, 0, 0, 0.04), rgba(0, 0, 0, 0.02));
+	margin-bottom: 18px;
+}
+
+.assignments-list {
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
+}
+
+.assignment-row {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 18px 16px;
+	border-radius: 6px;
+	border: 1px solid rgba(16, 24, 40, 0.04);
+}
+
+.assignment-row.alt {
+	background: #FBFBFF;
+}
+
+.left {
+	display: flex;
+	flex-direction: column;
+}
+
+.title {
+	color: #4F46E5;
+	font-weight: 600;
+	text-decoration: none;
+	font-size: 16px;
+}
+
+.course {
+	color: #9CA3AF;
+	font-size: 13px;
+	margin-top: 6px;
+}
+
+.right {
+	display: flex;
+	align-items: center;
+	gap: 18px;
+}
+
+.stats {
+	font-weight: 700;
+	text-align: right;
+}
+
+.stat-label {
+	font-weight: 400;
+	color: #6B7280;
+	font-size: 12px;
+	margin-left: 6px;
+}
+
+.due {
+	color: #6B7280;
+	font-size: 12px;
+}
+
+.view-btn {
+	background: #EEF2FF;
+	color: #374151;
+	border: none;
+	padding: 10px 14px;
+	border-radius: 12px;
+	cursor: pointer;
+}
+
+.notification {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	background: #FFFBEB;
+	border-radius: 8px;
+	padding: 16px 18px;
+	margin-top: 22px;
+	border: 1px solid rgba(250, 204, 21, 0.12);
+}
+
+.bell {
+	display: flex;
+	align-items: center
+}
+
+.bell svg {
+	width: 20px;
+	height: 20px;
+	color: #92400e
+}
+
+.note {
+	color: #6B4F00
+}
+
+/* icon sizes inside modal */
+.modal .close .icon-close {
+	width: 18px;
+	height: 18px;
+	color: #374151
+}
+
+/* responsive small screens */
+@media (max-width:720px) {
+	.right {
+		flex-direction: column;
+		align-items: flex-end
+	}
+
+	.assignments-header {
+		flex-direction: column;
+		align-items: flex-start
+	}
+}
+
+.modal-overlay {
+	position: fixed;
+	inset: 0;
+	background: rgba(2, 6, 23, 0.5);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 60;
+}
+
+.modal {
+	background: #fff;
+	width: 720px;
+	max-width: 92%;
+	border-radius: 10px;
+	padding: 18px;
+	box-shadow: 0 12px 40px rgba(2, 6, 23, 0.2);
+}
+
+.modal-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center
+}
+
+.modal-header h3 {
+	margin: 0
+}
+
+.modal .close {
+	background: transparent;
+	border: none;
+	font-size: 18px;
+	cursor: pointer
+}
+
+.modal-body {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	margin-top: 12px
+}
+
+.field {
+	display: flex;
+	flex-direction: column;
+	gap: 6px
+}
+
+.field input[type="text"],
+.field input[type="date"] {
+	padding: 8px;
+	border-radius: 6px;
+	border: 1px solid #E5E7EB
+}
+
+.file-picker input[type="file"] {
+	margin-top: 6px
+}
+
+.file-list {
+	margin-top: 10px;
+	border-top: 1px dashed #E6E6E6;
+	padding-top: 10px
+}
+
+.file-item {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 6px 0
+}
+
+.file-name {
+	color: #111827
+}
+
+.remove {
+	background: transparent;
+	border: none;
+	color: #DC2626;
+	cursor: pointer
+}
+
+.modal-footer {
+	display: flex;
+	justify-content: flex-end;
+	gap: 10px;
+	margin-top: 16px
+}
+
+.btn {
+	padding: 8px 12px;
+	border-radius: 8px;
+	border: 1px solid #D1D5DB;
+	background: #fff;
+	cursor: pointer
+}
+
+.btn.primary {
+	background: #4F46E5;
+	color: white;
+	border: none
+}
+
+/* styled label that triggers the hidden file input */
+.file-label {
+	display: inline-block;
+	padding: 8px 12px;
+	background: #EEF2FF;
+	color: #4F46E5;
+	border-radius: 8px;
+	cursor: pointer;
+	border: 1px solid rgba(79, 70, 229, 0.12);
+	margin-top: 8px;
+}
+
+.field .label {
+	font-size: 13px;
+	color: #374151;
+	margin-bottom: 6px;
+	display: block
+}

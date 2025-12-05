@@ -1,0 +1,93 @@
+<div class="assignments-card">
+	<div class="assignments-header">
+		<h2>Manage Assignments</h2>
+		<label class="upload-btn" for="assignmentFileTop" (dragover)="$event.preventDefault()" (drop)="onDrop($event)">
+			Upload New Assignment
+		</label>
+		<input id="assignmentFileTop" type="file" hidden (change)="onFileSelected($event)" />
+	</div>
+
+	<p class="muted">File upload and deadline timer functionality goes here.</p>
+
+	<div class="divider"></div>
+
+	<div class="assignments-list">
+		<div class="assignment-row" *ngFor="let a of assignments; let i = index" [class.alt]="i % 2 === 1">
+			<div class="left">
+				<a class="title">{{ a.title }}</a>
+				<div class="course">{{ a.course }}</div>
+			</div>
+			<div class="right">
+				<div class="stats">0 <span class="stat-label">Submitted</span></div>
+				<div class="due">Due: <span>{{ a.due }}</span></div>
+				<button class="view-btn" (click)="viewSubmissions(a)">View Submissions</button>
+				<button class="view-btn" *ngIf="a.fileDataUrl" (click)="downloadAttachment(a)">Download</button>
+				<button class="view-btn" (click)="deleteAssignment(a.id)">Delete</button>
+			</div>
+		</div>
+		<div *ngIf="assignments.length === 0" class="muted">No assignments uploaded yet.</div>
+	</div>
+
+	<div class="notification">
+		<div class="bell" aria-hidden="true">
+			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon icon-bell"
+				aria-hidden="true">
+				<path
+					d="M10 2a2 2 0 00-2 2v.086A6.002 6.002 0 004 10v3l-1 1v1h14v-1l-1-1v-3a6.002 6.002 0 00-4-5.914V4a2 2 0 00-2-2z" />
+				<path d="M8 17a2 2 0 104 0H8z" />
+			</svg>
+		</div>
+		<div class="note">Auto-notification for due dates and submission confirmations will appear here.</div>
+	</div>
+</div>
+
+<div class="modal-overlay" *ngIf="uploadOpen">
+	<div class="modal" role="dialog" aria-modal="true">
+		<div class="modal-header">
+			<h3>Upload Assignment</h3>
+			<button class="close" (click)="closeUpload()" aria-label="Close dialog">
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon icon-close"
+					aria-hidden="true">
+					<path fill-rule="evenodd"
+						d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+						clip-rule="evenodd" />
+				</svg>
+			</button>
+		</div>
+
+		<div class="modal-body">
+			<label class="field">Title
+				<input #title type="text" placeholder="Assignment title" />
+			</label>
+
+			<label class="field">Course
+				<input #course type="text" placeholder="Course (e.g. CS 101)" />
+			</label>
+
+			<label class="field">Due Date
+				<input #due type="date" />
+			</label>
+
+			<div class="field">
+				<span class="label">Attachment (optional)</span>
+				<label class="file-label" for="assignmentFile">Choose file</label>
+				<input id="assignmentFile" type="file" hidden (change)="onFileSelected($event)" />
+
+			</div>
+
+			<div class="file-list" *ngIf="selectedFiles.length > 0">
+				<div class="file-item" *ngFor="let f of selectedFiles; let i = index">
+					<div class="file-name">{{ f.name }}</div>
+					<button class="remove" (click)="removeFile(i)">Remove</button>
+				</div>
+			</div>
+		</div>
+
+		<div class="modal-footer">
+			<button class="btn" (click)="closeUpload()">Cancel</button>
+			<button class="btn primary" (click)="submitAssignment(title.value, course.value, due.value)">
+				Upload Assignment
+			</button>
+		</div>
+	</div>
+</div>
