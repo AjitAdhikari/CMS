@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Course, CourseService } from 'src/app/services/course.service';
+import { Course, CourseService } from '../../../../services/course.service';
 
 @Component({
   selector: 'app-dashboard',
