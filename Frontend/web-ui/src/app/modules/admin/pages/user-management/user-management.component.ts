@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Course, CourseService } from '../../../../services/course.service';
 
 interface User {
   id: number;
@@ -7,7 +8,7 @@ interface User {
   roles: string[];
   status: 'Active' | 'Inactive';
   semester?: number;
-  subject?: string;
+  courseId?: number;
   activity?: string;
 }
 
@@ -19,6 +20,7 @@ interface User {
 export class UserManagementComponent implements OnInit {
   users: User[] = [];
   roles: string[] = ['Admin', 'Student', 'Faculty'];
+  courses: Course[] = [];
 
   // UI state
   showForm = false;
@@ -30,12 +32,15 @@ export class UserManagementComponent implements OnInit {
 
   private nextId = 4;
 
+  constructor(private courseService: CourseService) {}
+
   ngOnInit(): void {
+    this.courses = this.courseService.getCourses();
     // sample data
     this.users = [
       { id: 1, name: 'David Lee', email: 'david.lee@example.com', roles: ['Admin'], status: 'Active' },
       { id: 2, name: 'Sara Powell', email: 'sara.powell@example.com', roles: ['Student'], status: 'Active', semester: 2, activity: 'Online' },
-      { id: 3, name: 'Mark Chan', email: 'mark.chan@example.com', roles: ['Faculty'], status: 'Inactive', subject: 'Mathematics' }
+      { id: 3, name: 'Mark Chan', email: 'mark.chan@example.com', roles: ['Faculty'], status: 'Inactive', courseId: undefined }
     ];
   }
 
@@ -46,6 +51,12 @@ export class UserManagementComponent implements OnInit {
       const matchesRole = !this.roleFilter || u.roles.includes(this.roleFilter);
       return matchesTerm && matchesRole;
     });
+  }
+
+  getCourseTitle(courseId?: number): string {
+    if (!courseId) return '-';
+    const course = this.courses.find(c => c.id === courseId);
+    return course ? course.title : '-';
   }
 
   get modalTitle(): string {
@@ -65,12 +76,11 @@ export class UserManagementComponent implements OnInit {
     this.currentAddRole = role;
     this.tempUser = { name: '', email: '', roles: [role], status: 'Active' };
     if (role === 'Student') this.tempUser.semester = 1;
-    if (role === 'Faculty') this.tempUser.subject = '';
+    if (role === 'Faculty') this.tempUser.courseId = undefined;
     this.showForm = true;
   }
 
   openAddCurrent(): void {
-    // open add form for the currently selected role tab
     this.openAddForRole(this.roleFilter as 'Admin' | 'Student' | 'Faculty');
   }
 
@@ -112,10 +122,10 @@ export class UserManagementComponent implements OnInit {
           roles: original.roles,
           status: t.status || original.status,
           semester: original.semester,
-          subject: original.subject
+          courseId: original.courseId
         };
         if ((t as any).semester !== undefined) updated.semester = (t as any).semester;
-        if ((t as any).subject !== undefined) updated.subject = (t as any).subject;
+        if ((t as any).courseId !== undefined) updated.courseId = (t as any).courseId;
         this.users[idx] = updated;
       }
     } else {
@@ -127,7 +137,7 @@ export class UserManagementComponent implements OnInit {
         roles: [role],
         status: t.status || 'Active',
         semester: role === 'Student' ? ((t as any).semester || 1) : undefined,
-        subject: role === 'Faculty' ? ((t as any).subject || '') : undefined
+        courseId: role === 'Faculty' ? ((t as any).courseId || undefined) : undefined
       };
       this.users.unshift(newUser);
     }

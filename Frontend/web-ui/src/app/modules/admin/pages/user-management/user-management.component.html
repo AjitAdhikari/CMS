@@ -29,7 +29,7 @@
 				<tr *ngIf="roleFilter === 'Faculty'">
 					<th>Name</th>
 					<th>Email</th>
-					<th>Subject</th>
+					<th>Course</th>
 					<th>Status</th>
 					<th class="actions">Actions</th>
 				</tr>
@@ -58,7 +58,7 @@
 					<tr *ngFor="let u of filteredUsers">
 						<td>{{ u.name }}</td>
 						<td>{{ u.email }}</td>
-						<td>{{ u.subject || '-' }}</td>
+						<td>{{ getCourseTitle(u.courseId) }}</td>
 						<td>{{ u.status }}</td>
 						<td class="actions">
 							<button class="btn small" (click)="openEdit(u)">Edit</button>
@@ -129,8 +129,11 @@
 				<input [(ngModel)]="tempUser.email" placeholder="user@example.com" />
 			</div>
 			<div *ngIf="currentAddRole === 'Faculty' || (editing && tempUser.roles?.includes('Faculty'))" class="form-row">
-				<label>Subject</label>
-				<input [(ngModel)]="tempUser.subject" placeholder="e.g. Mathematics" />
+				<label>Course</label>
+				<select [(ngModel)]="tempUser.courseId">
+					<option [ngValue]="undefined">Select a course</option>
+					<option *ngFor="let course of courses" [ngValue]="course.id">{{ course.title }}</option>
+				</select>
 			</div>
 			<div *ngIf="currentAddRole === 'Faculty' || (editing && tempUser.roles?.includes('Faculty'))" class="form-row">
 				<label>Status</label>
