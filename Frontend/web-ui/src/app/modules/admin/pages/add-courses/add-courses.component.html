@@ -17,7 +17,8 @@
 			<textarea name="description" [(ngModel)]="model.description" class="form-control"></textarea>
 		</div>
 
-		<button class="btn btn-primary" type="submit">Add Course</button>
+		<button class="btn btn-primary" type="submit">{{ editingId !== null ? 'Update Course' : 'Add Course' }}</button>
+		<button *ngIf="editingId !== null" class="btn btn-secondary" type="button" (click)="cancel()">Cancel</button>
 
 		<p class="success" *ngIf="successMessage">{{ successMessage }}</p>
 	</form>
@@ -25,11 +26,26 @@
 	<hr />
 
 	<h3>Existing Courses</h3>
-	<ul class="course-list">
-		<li *ngIf="courses.length === 0" class="muted">No courses added yet.</li>
-		<li *ngFor="let c of courses">
-			<strong>{{c.code}}</strong> — {{c.title}}
-			<div class="small muted">{{c.description}}</div>
-		</li>
-	</ul>
+	<div *ngIf="courses.length === 0" class="muted">No courses added yet.</div>
+	<table class="table table-striped" *ngIf="courses.length > 0">
+		<thead>
+			<tr>
+				<th>Course ID</th>
+				<th>Course Title</th>
+				<th>Description</th>
+				<th>Activity</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr *ngFor="let c of courses">
+				<td>{{c.id}}</td>
+				<td>{{c.title}}</td>
+				<td>{{c.description}}</td>
+				<td>
+					<button class="btn btn-sm btn-info" type="button" (click)="edit(c)">Edit</button>
+					<button class="btn btn-sm btn-danger" type="button" (click)="delete(c.id)">Delete</button>
+				</td>
+			</tr>
+		</tbody>
+	</table>
 </div>

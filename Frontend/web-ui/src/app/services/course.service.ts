@@ -22,6 +22,20 @@ export class CourseService {
     return course;
   }
 
+  updateCourse(id: number, data: Omit<Course, 'id'>) {
+    const index = this.courses.findIndex(c => c.id === id);
+    if (index !== -1) {
+      this.courses[index] = { id, ...data } as Course;
+    }
+  }
+
+  deleteCourse(id: number) {
+    const index = this.courses.findIndex(c => c.id === id);
+    if (index !== -1) {
+      this.courses.splice(index, 1);
+    }
+  }
+
   getCourses(): Course[] {
     return this.courses.slice();
   }
