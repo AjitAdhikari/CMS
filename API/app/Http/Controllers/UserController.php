@@ -58,30 +58,50 @@ class UserController extends Controller
     // PUT: Update Document (no file upload here, just metadata)
     public function update(Request $request)
     {
-        $validated = $request->validate([
-            'id'          => 'required|exists:documents,id',
-            'name'        => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'path'        => 'nullable|string|max:255',
-            'type'        => 'nullable|string|max:255',
-            'size'        => 'nullable|integer',
-        ]);
+        try
+        {
+          $validated = $request->validate([
+                'id'  => 'required|exists:users,id',
+                'name' => 'required|string|max:255',
+                'email' => 'required|string|email', // unique in users table
+                'active_status' => 'required|integer',
+                'role' => 'required|string',
+                'subjects' => 'nullable|string',
+                'semesters' => 'nullable|string',
+                // 'password' => 'required|string',
+                'avatar' => 'nullable|file|max:10240', // optional for testing
+            ]);
 
-        try {
-            $entity = Document::findOrFail($validated['id']);
-            $entity->name        = $validated['name'];
-            $entity->description = $validated['description'] ?? $entity->description;
-            $entity->path        = $validated['path'] ?? $entity->path;
-            $entity->type        = $validated['type'] ?? $entity->type;
-            $entity->size        = $validated['size'] ?? $entity->size;
-            $entity->updated_by  = Auth::id();
-            $entity->updated_at  = now();
+            $entity = User::findOrFail($validated['id']);
+            $entity->name  = $validated['name'];
+            $entity->email = $validated['email'] ?? $entity->email;
+            $entity->active_status  = $validated['active_status'] ?? $entity->active_status;
+            // $entity->password = Hash::make($validated['password']);
+            $entity->updated_at = now();
             $entity->save();
 
-            return response()->json(['message' => 'Updated successfully']);
-        } catch (\Exception $ex) {
+            $last_inserted_id = $entity->id;
+
+
+            $user_profile = UserProfile::where('user_id', $entity->id)->first();
+            $user_profile->user_id = $entity->id;
+            $user_profile->role = $validated['role'] ?? $user_profile->role;
+            $user_profile->subjects = $validated['subjects'] ?? $user_profile->subjects;
+            $user_profile->semesters = $validated['semesters'] ?? $user_profile->semesters;
+            $user_profile->updated_at = now();
+            $user_profile->save();
+
+           return response()->json([
+                'message' => 'User Updated Successfully',
+                'user_id' => $last_inserted_id
+            ], 201);
+
+        } catch(\Exception $ex)
+        {
             return response()->json(['error' => $ex->getMessage()], 400);
         }
+
+      
     }
 
     // DELETE: Delete Document by ID
@@ -116,7 +136,9 @@ class UserController extends Controller
                     'users.email',
                     'users.active_status',
                     'user_profiles.role',
-                    'user_profiles.avatar'
+                    'user_profiles.avatar',
+                    'user_profiles.subjects',
+                    'user_profiles.semesters'
                 )
                 ->first();
 
