@@ -97,6 +97,17 @@
 				<label>Email</label>
 				<input [(ngModel)]="tempUser.email" placeholder="user@example.com" />
 			</div>
+			<div *ngIf="currentAddRole === 'Admin' || (editing && tempUser.roles?.includes('Admin'))" class="form-row">
+				<label>Password</label>
+				<input type="password" [(ngModel)]="tempUser.password" placeholder="Set password" />
+			</div>
+			<div *ngIf="currentAddRole === 'Admin' || (editing && tempUser.roles?.includes('Admin'))" class="form-row">
+				<label>Status</label>
+				<select [(ngModel)]="tempUser.status">
+					<option value="Active">Active</option>
+					<option value="Inactive">Inactive</option>
+				</select>
+			</div>
 
 			<div *ngIf="currentAddRole === 'Student' || (editing && tempUser.roles?.includes('Student'))" class="form-row">
 				<label>Name</label>
@@ -105,6 +116,10 @@
 			<div *ngIf="currentAddRole === 'Student' || (editing && tempUser.roles?.includes('Student'))" class="form-row">
 				<label>Email</label>
 				<input [(ngModel)]="tempUser.email" placeholder="user@example.com" />
+			</div>
+			<div *ngIf="currentAddRole === 'Student' || (editing && tempUser.roles?.includes('Student'))" class="form-row">
+				<label>Password</label>
+				<input type="password" [(ngModel)]="tempUser.password" placeholder="Set password" />
 			</div>
 			<div *ngIf="currentAddRole === 'Student' || (editing && tempUser.roles?.includes('Student'))" class="form-row">
 				<label>Semester</label>
@@ -127,6 +142,10 @@
 			<div *ngIf="currentAddRole === 'Faculty' || (editing && tempUser.roles?.includes('Faculty'))" class="form-row">
 				<label>Email</label>
 				<input [(ngModel)]="tempUser.email" placeholder="user@example.com" />
+			</div>
+			<div *ngIf="currentAddRole === 'Faculty' || (editing && tempUser.roles?.includes('Faculty'))" class="form-row">
+				<label>Password</label>
+				<input type="password" [(ngModel)]="tempUser.password" placeholder="Set password" />
 			</div>
 			<div *ngIf="currentAddRole === 'Faculty' || (editing && tempUser.roles?.includes('Faculty'))" class="form-row">
 				<label>Course</label>
