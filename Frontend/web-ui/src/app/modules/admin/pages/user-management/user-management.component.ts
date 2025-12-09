@@ -129,7 +129,7 @@ export class UserManagementComponent implements OnInit {
         if ((t as any).semester !== undefined) updated.semester = (t as any).semester;
         if ((t as any).courseId !== undefined) updated.courseId = (t as any).courseId;
         this.users[idx] = updated;
-      }
+      } 
     } else {
       const role = this.currentAddRole || (this.roleFilter as 'Admin' | 'Student' | 'Faculty');
       const newUser: User = {

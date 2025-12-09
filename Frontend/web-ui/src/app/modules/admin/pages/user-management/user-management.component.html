@@ -118,11 +118,11 @@
 				<input [(ngModel)]="tempUser.email" placeholder="user@example.com" />
 			</div>
 			<div *ngIf="currentAddRole === 'Student' || (editing && tempUser.roles?.includes('Student'))" class="form-row">
-				<label>Password</label>
+				<label>Password</label> 
 				<input type="password" [(ngModel)]="tempUser.password" placeholder="Set password" />
 			</div>
 			<div *ngIf="currentAddRole === 'Student' || (editing && tempUser.roles?.includes('Student'))" class="form-row">
-				<label>Semester</label>
+				<label>Semester</label> 
 				<select [(ngModel)]="tempUser.semester">
 					<option *ngFor="let n of [1,2,3,4,5,6,7,8]" [ngValue]="n">Semester {{ n }}</option>
 				</select>
