@@ -23,4 +23,8 @@ class FeeDetail extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function feeDetails() {
+        return $this->hasMany(FeeDetail::class, 'user_id');
+    }
 }

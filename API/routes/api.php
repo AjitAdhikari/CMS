@@ -1,20 +1,14 @@
 <?php
 
-// use App\Http\Controllers\InventoryController;
-// use App\Http\Controllers\MemberController;
-// use App\Http\Controllers\DocumentController;
-// use App\Http\Controllers\ExpenseController;
-// use App\Http\Controllers\IncomeController;
-
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\FeeController;
 
 
 Route::get('/test', function() {
     return ['message' => 'API is working'];
 });
 
-// Route::post('/users', [UserController::class, 'create']);
-
+//http://localhost:8000/api/users
 Route::prefix('users')->group(function(){
     Route::post('/', [UserController::class, 'create']);
     Route::post('/{id}', [USerController::class, 'update']);
@@ -23,13 +17,19 @@ Route::prefix('users')->group(function(){
     Route::get('/', [UserController::class, 'index']);
 });
 
-// Route::prefix('inventories')->group(function () {
-//     Route::post('/', [InventoryController::class, 'create']);
-//     Route::post('/{id}', [InventoryController::class, 'store']);
-//     Route::delete('/{id}', [InventoryController::class, 'destroy']);
-//     Route::get('/{id}', [InventoryController::class, 'get']);
-//     Route::get('/', [InventoryController::class, 'index']);
-// });
+
+//http://localhost:8000/api/fees
+Route::prefix('fees')->group(function () {
+    Route::post('/', [FeeController::class, 'create']);
+    Route::post('/details', [FeeController::class, 'create_fee_details']);
+    Route::post('/{id}', [FeeController::class, 'store']);
+    Route::post('/details/{id}', [FeeController::class], 'update_fee_details');
+    Route::delete('/{id}', [FeeController::class, 'delete']);
+    Route::delete('/details/{id}', [FeeController::class, 'delete_fee_details']);
+    Route::get('/{user_id}', [FeeController::class, 'show']);
+    Route::get('/details/{user_id}', [FeeController::class, 'show_fee_details']);
+    Route::get('/', [FeeController::class, 'index']);
+});
 
 // Route::prefix('members')->group(function () {
 //     Route::post('/', [MemberController::class, 'create']);

@@ -109,12 +109,6 @@ class UserController extends Controller
     {
         try {
             $entity = User::findOrFail($id);
-
-            // // Delete file from storage if exists
-            // if ($document->path && Storage::disk('public')->exists($document->path)) {
-            //     Storage::disk('public')->delete($document->path);
-            // }
-
             $entity->delete();
 
             return response()->json(['message' => 'Deleted successfully']);
