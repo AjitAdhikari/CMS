@@ -2,10 +2,21 @@
 
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\FeeController;
+use App\Http\Controllers\AuthController;
 
 
 Route::get('/test', function() {
     return ['message' => 'API is working'];
+});
+
+
+Route::prefix('auth')->group(function () {
+    Route::post('/login',    [AuthController::class, 'login']);
+
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/logout',  [AuthController::class, 'logout']);
+        Route::get('/profile',  [AuthController::class, 'profile']);
+    });
 });
 
 //http://localhost:8000/api/users
