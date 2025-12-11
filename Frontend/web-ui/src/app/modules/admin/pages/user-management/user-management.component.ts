@@ -7,6 +7,7 @@ interface User {
   email: string;
   roles: string[];
   status: 'Active' | 'Inactive';
+  password?: string;
   semester?: number;
   courseId?: number;
   activity?: string;
@@ -121,13 +122,14 @@ export class UserManagementComponent implements OnInit {
           email: t.email,
           roles: original.roles,
           status: t.status || original.status,
+          password: t.password || original.password,
           semester: original.semester,
           courseId: original.courseId
         };
         if ((t as any).semester !== undefined) updated.semester = (t as any).semester;
         if ((t as any).courseId !== undefined) updated.courseId = (t as any).courseId;
         this.users[idx] = updated;
-      }
+      } 
     } else {
       const role = this.currentAddRole || (this.roleFilter as 'Admin' | 'Student' | 'Faculty');
       const newUser: User = {
@@ -136,6 +138,7 @@ export class UserManagementComponent implements OnInit {
         email: t.email,
         roles: [role],
         status: t.status || 'Active',
+        password: t.password,
         semester: role === 'Student' ? ((t as any).semester || 1) : undefined,
         courseId: role === 'Faculty' ? ((t as any).courseId || undefined) : undefined
       };
