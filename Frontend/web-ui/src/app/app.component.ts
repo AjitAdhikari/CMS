@@ -42,4 +42,12 @@ export class AppComponent {
       return false;
     }
   }
+
+  isStudentRoute(): boolean {
+    try {
+      return this.router.url.startsWith('/student');
+    } catch {
+      return false;
+    }
+  }
 }

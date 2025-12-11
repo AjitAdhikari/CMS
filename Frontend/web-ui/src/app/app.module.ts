@@ -15,6 +15,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { InventoryModule } from './modules/inventory/inventory.module';
 import { LayoutModule } from './modules/layout/layout.module';
 import { MemberModule } from './modules/member/member.module';
+import { StudentSidebarComponent } from './modules/student/components/student-sidebar/student-sidebar.component';
 
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 import { ToastrModule } from 'ngx-toastr';
@@ -31,6 +32,7 @@ export function init_app(appLoadService: AppConfigInitService) {
   declarations: [
     AppComponent,
     AdminSidebarComponent,
+    StudentSidebarComponent,
 
   ],
   imports: [
