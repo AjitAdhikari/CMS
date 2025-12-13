@@ -4,12 +4,14 @@ import { NgModule } from '@angular/core';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { StudentRoutingModule } from './student-routing.module';
 import { ScheduleComponent } from './pages/schedule/schedule.component';
+import { NoticeComponent } from './pages/notice/notice.component';
 
 
 @NgModule({
   declarations: [
     DashboardComponent,
-    ScheduleComponent
+    ScheduleComponent,
+    NoticeComponent
   ],
   imports: [
     CommonModule,

@@ -17,14 +17,6 @@ export class ScheduleComponent {
 
   schedules: ScheduleItem[] = [
     {
-      course: 'Operating Systems',
-      semester: 3,
-      day: 'Wednesday',
-      startTime: '11:00',
-      endTime: '12:30',
-      remarks: 'Lecture Hall B'
-    },
-    {
       course: 'Database Systems',
       semester: 4,
       day: 'Friday',
