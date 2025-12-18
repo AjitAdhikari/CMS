@@ -38,7 +38,7 @@ export class FeesComponent implements OnInit {
     this.totalPaidYear = 3500.00;
   }
 
-  // proceedToPayment(): void {
-  //   alert('Payment system integration placeholder. This will redirect to payment gateway.');
-  // }
+  proceedToPayment(): void {
+    alert('Payment system integration placeholder. This will redirect to payment gateway.');
+  }
 }
