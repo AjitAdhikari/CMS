@@ -1,0 +1,55 @@
+<div class="fees-container">
+  <h1>Fees Management</h1>
+
+  <div class="summary">
+    <div class="summary-item">
+      <label>Pending Dues</label>
+      <div class="amount pending">${{ pendingDues.toFixed(2) }}</div>
+    </div>
+
+    <div class="summary-item">
+      <label>Last Payment</label>
+      <div class="amount" *ngIf="lastPayment">
+        ${{ lastPayment.amount.toFixed(2) }}
+        <small>({{ lastPayment.date }})</small>
+      </div>
+      <div class="amount" *ngIf="!lastPayment">No payments yet</div>
+    </div>
+
+    <div class="summary-item">
+      <label>Total Paid (Year)</label>
+      <div class="amount">${{ totalPaidYear.toFixed(2) }}</div>
+    </div>
+  </div>
+
+  <h2>Pending Fees</h2>
+  
+  <table>
+    <thead>
+      <tr>
+        <th>Fee Type</th>
+        <th>Amount</th>
+        <th>Due Date</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let fee of pendingFees">
+        <td>{{ fee.feeType }}</td>
+        <td>${{ fee.amount.toFixed(2) }}</td>
+        <td [class.urgent]="fee.dueDate === 'Immediate'">{{ fee.dueDate }}</td>
+        <td>
+          <span class="status" [ngClass]="fee.status.toLowerCase()">{{ fee.status }}</span>
+        </td>
+      </tr>
+      <tr *ngIf="pendingFees.length === 0">
+        <td colspan="4" style="text-align: center;">No pending fees</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="payment-section">
+    <button (click)="proceedToPayment()">Proceed to Online Payment</button>
+    <p>Integration payment system placeholder.</p>
+  </div>
+</div>

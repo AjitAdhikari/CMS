@@ -5,13 +5,15 @@ import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { StudentRoutingModule } from './student-routing.module';
 import { ScheduleComponent } from './pages/schedule/schedule.component';
 import { NoticeComponent } from './pages/notice/notice.component';
+import { FeesComponent } from './pages/fees/fees.component';
 
 
 @NgModule({
   declarations: [
     DashboardComponent,
     ScheduleComponent,
-    NoticeComponent
+    NoticeComponent,
+    FeesComponent
   ],
   imports: [
     CommonModule,
