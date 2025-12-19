@@ -6,6 +6,7 @@ import { StudentRoutingModule } from './student-routing.module';
 import { ScheduleComponent } from './pages/schedule/schedule.component';
 import { NoticeComponent } from './pages/notice/notice.component';
 import { FeesComponent } from './pages/fees/fees.component';
+import { AssignmentsComponent } from './pages/assignments/assignments.component';
 
 
 @NgModule({
@@ -13,7 +14,8 @@ import { FeesComponent } from './pages/fees/fees.component';
     DashboardComponent,
     ScheduleComponent,
     NoticeComponent,
-    FeesComponent
+    FeesComponent,
+    AssignmentsComponent
   ],
   imports: [
     CommonModule,

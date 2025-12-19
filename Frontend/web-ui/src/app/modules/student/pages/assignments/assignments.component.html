@@ -1,0 +1,43 @@
+<div class="assignments-page">
+	<section class="panel assignments-panel">
+		<div class="panel-head">
+			<div>
+				<h2 class="page-title">Assignments</h2>
+				<p class="muted">Track due dates, status, and submissions.</p>
+			</div>
+			<button class="primary" type="button">Upload/View All</button>
+		</div>
+
+		<div class="table-wrapper">
+			<table class="assignments-table">
+				<thead>
+					<tr>
+						<th>Title</th>
+						<th>Course</th>
+						<th>Due</th>
+						<th>Status</th>
+						<th>Action</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr *ngFor="let assignment of assignments">
+						<td>
+							<div class="title">{{ assignment.title }}</div>
+						</td>
+						<td class="muted">{{ assignment.course }}</td>
+						<td>{{ assignment.dueDate }}</td>
+						<td>
+							<span class="status" [ngClass]="statusClass(assignment.status)">{{ assignment.status }}</span>
+						</td>
+						<td>
+							<button class="link-btn" type="button">Upload/View</button>
+						</td>
+					</tr>
+					<tr *ngIf="assignments.length === 0">
+						<td colspan="5" class="empty">No assignments available.</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</section>
+</div>
