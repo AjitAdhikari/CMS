@@ -9,6 +9,7 @@ import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { GradesComponent } from './pages/grades/grades.component';
 import { NotesComponent } from './pages/notes/notes.component';
 import { NoticesComponent } from './pages/notices/notices.component';
+import { ScheduleComponent } from './pages/schedule/schedule.component';
 
 @NgModule({
   declarations: [
@@ -17,6 +18,7 @@ import { NoticesComponent } from './pages/notices/notices.component';
     GradesComponent,
     NoticesComponent,
     NotesComponent,
+    ScheduleComponent,
   ],
   imports: [
     CommonModule,

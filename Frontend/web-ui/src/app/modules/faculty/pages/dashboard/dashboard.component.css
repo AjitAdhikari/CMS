@@ -66,6 +66,10 @@
     background: rgba(245, 158, 11, 0.06);
 }
 
+.bg-5 {
+    background: rgba(109, 40, 217, 0.08);
+}
+
 .announcements .ann-list {
     list-style: none;
     padding: 0;
