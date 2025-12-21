@@ -1,7 +1,8 @@
 .schedule-container {
-  padding: 2rem;
-  max-width: 1400px;
-  margin: 0 auto;
+  padding: 1.5rem;
+  max-width: 100%;
+  margin: 0;
+  height: auto;
 }
 
 .schedule-header {
@@ -141,51 +142,127 @@
   gap: 1.5rem;
 }
 
-.schedules-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 1.5rem;
-}
-
-.schedule-card {
+.table-container {
   background: white;
   border-radius: 0.75rem;
   border: 1px solid #e5e7eb;
-  overflow: hidden;
-  transition: all 0.3s ease;
+  overflow: visible;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  width: 100%;
 }
 
-.schedule-card:hover {
-  border-color: #4f46e5;
-  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15);
+.schedules-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto;
 }
 
-.card-header {
-  padding: 1.5rem;
-  border-bottom: 1px solid #f3f4f6;
-  display: flex;
-  justify-content: space-between;
-  align-items: start;
+.schedules-table thead {
+  background-color: #f9fafb;
+  border-bottom: 2px solid #e5e7eb;
+  position: sticky;
+  top: 0;
 }
 
-.course-info {
-  flex: 1;
-}
-
-.course-name {
-  margin: 0;
-  font-size: 1.25rem;
+.schedules-table th {
+  padding: 1.2rem 1.5rem;
+  text-align: left;
   font-weight: 700;
+  font-size: 0.9rem;
+  color: #374151;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.schedules-table tbody tr {
+  border-bottom: 1px solid #e5e7eb;
+  transition: background-color 0.2s ease;
+}
+
+.schedules-table tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+.schedules-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.schedules-table td {
+  padding: 1.2rem 1.5rem;
+  color: #1f2937;
+  font-size: 0.95rem;
+  vertical-align: middle;
+  word-break: break-word;
+}
+
+.schedules-table td:first-child {
+  min-width: 180px;
+  max-width: 200px;
+}
+
+.schedules-table td:nth-child(2) {
+  min-width: 90px;
+  max-width: 110px;
+}
+
+.schedules-table td:nth-child(3) {
+  min-width: 140px;
+  max-width: 160px;
+}
+
+.schedules-table td:nth-child(4) {
+  min-width: 100px;
+  max-width: 120px;
+}
+
+.schedules-table td:nth-child(5) {
+  min-width: 120px;
+  max-width: 140px;
+}
+
+.schedules-table td:nth-child(6) {
+  min-width: 90px;
+  max-width: 110px;
+  white-space: nowrap;
+}
+
+.schedules-table td:nth-child(7) {
+  min-width: 100px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.course-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  line-height: 1.4;
+}
+
+.course-name-text {
+  font-weight: 600;
+  color: #1f2937;
+  word-wrap: break-word;
+}
+
+.course-id {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.time-text {
+  font-weight: 500;
   color: #1f2937;
 }
 
-.schedule-badges {
+.action-buttons {
   display: flex;
   gap: 0.5rem;
-  margin-top: 0.5rem;
-  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
 }
+
 
 .type-badge {
   display: inline-block;
@@ -193,8 +270,6 @@
   border-radius: 9999px;
   font-size: 0.75rem;
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
 }
 
 .type-regular {
@@ -223,9 +298,7 @@
   border-radius: 9999px;
   font-size: 0.75rem;
   font-weight: 600;
-  margin-top: 0.5rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  white-space: nowrap;
 }
 
 .status-badge.active {
@@ -238,15 +311,9 @@
   color: #92400e;
 }
 
-.card-actions {
-  display: flex;
-  gap: 0.5rem;
-  margin-left: 1rem;
-}
-
 .btn-icon {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   border: none;
   background-color: #f3f4f6;
   border-radius: 0.5rem;
@@ -268,33 +335,6 @@
 
 .btn-icon.danger:hover {
   background-color: #fee2e2;
-}
-
-.card-body {
-  padding: 1.5rem;
-}
-
-.schedule-details {
-  display: grid;
-  gap: 1rem;
-}
-
-.detail-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.detail-label {
-  color: #6b7280;
-  font-weight: 500;
-  font-size: 0.875rem;
-}
-
-.detail-value {
-  color: #1f2937;
-  font-weight: 600;
-  font-size: 1rem;
 }
 
 /* Modal Styles */
@@ -505,18 +545,19 @@
     justify-content: center;
   }
 
-  .schedules-list {
-    grid-template-columns: 1fr;
+  .table-container {
+    overflow-x: auto;
+    border-radius: 0.5rem;
   }
 
-  .card-header {
-    flex-direction: column;
-    gap: 1rem;
+  .schedules-table {
+    min-width: 800px;
   }
 
-  .card-actions {
-    margin-left: 0;
-    width: 100%;
+  .schedules-table th,
+  .schedules-table td {
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
   }
 
   .modal-content {
