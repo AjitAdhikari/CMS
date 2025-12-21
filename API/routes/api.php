@@ -3,6 +3,7 @@
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\FeeController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\NoticeController;
 
 
 Route::get('/test', function() {
@@ -42,14 +43,13 @@ Route::prefix('fees')->group(function () {
     Route::get('/', [FeeController::class, 'index']);
 });
 
-// Route::prefix('members')->group(function () {
-//     Route::post('/', [MemberController::class, 'create']);
-//     Route::post('/{id}', [MemberController::class, 'store']);
-//     Route::get('/', [MemberController::class, 'index']);
-//     Route::delete('/{id}', [MemberController::class, 'destroy']);
-//     Route::get('/{id}', [MemberController::class, 'get']);
-//     Route::get('/active-member', [MemberController::class, 'list_active_members']);
-// });
+Route::prefix('notices')->group(function () {
+    Route::post('/', [NoticeController::class, 'create']);
+    Route::post('/{id}', [NoticeController::class, 'update']);
+    Route::get('/', [NoticeController::class, 'list']);
+    Route::delete('/{id}', [NoticeController::class, 'delete']);
+    Route::get('/{id}', [NoticeController::class, 'get']);
+});
 
 // Route::prefix('documents')->group(function () {
 //     Route::post('/', [DocumentController::class, 'create']);
