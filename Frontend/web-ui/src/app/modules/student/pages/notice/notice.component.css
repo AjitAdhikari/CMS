@@ -92,19 +92,10 @@
 }
 
 .actions button {
-    padding: 8px 14px;
+    padding: 6px 10px;
     border: none;
-    background: #4F46E5;
-    color: #ffffff;
-    border-radius: 6px;
+    background: #ddd;
     cursor: pointer;
-    font-weight: 600;
-    font-size: 13px;
-    transition: background 0.2s ease;
-}
-
-.actions button:hover {
-    background: #4338ca;
 }
 
 .notice-detail {

@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { Notice, NoticeService } from 'src/app/services/notice.service';
 import { Course, CourseService } from '../../../../services/course.service';
 
 @Component({
@@ -6,11 +8,39 @@ import { Course, CourseService } from '../../../../services/course.service';
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit {
   recentCourses: Course[] = [];
+  announcements: Notice[] = [];
 
-  constructor(private courseService: CourseService) {
-    this.recentCourses = this.courseService.getCourses().slice(0,5);
+  constructor(
+    private courseService: CourseService,
+    private noticeService: NoticeService,
+    private router: Router
+  ) {}
+
+  ngOnInit() {
+    this.loadCourses();
+    this.loadAnnouncements();
   }
 
+  loadCourses() {
+    this.recentCourses = this.courseService.getCourses().slice(0, 5);
+  }
+
+  loadAnnouncements() {
+    this.noticeService.list({ limit: 5 }).subscribe({
+      next: (response) => {
+        this.announcements = response.items || [];
+      },
+      error: (error) => {
+        console.error('Error loading announcements:', error);
+      }
+    });
+  }
+
+  openAnnouncementDetail(announcement: Notice) {
+    this.router.navigate(['/admin/notice-control'], {
+      queryParams: { noticeId: announcement.id }
+    });
+  }
 }

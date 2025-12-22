@@ -30,17 +30,17 @@
 
                     <label class="field">
                         <span class="label">Content</span>
-                        <textarea rows="5" [(ngModel)]="adminNotice.content" name="content"
+                        <textarea rows="5" [(ngModel)]="adminNotice.description" name="description"
                             placeholder="Full notice content"></textarea>
                     </label>
 
                     <label class="field">
-                        <span class="label">Attachment (optional)</span>
-                        <input type="file" (change)="onFileSelected($event)" />
+                        <span class="label">Notice Date</span>
+                        <input type="date" [(ngModel)]="adminNotice.noticeDate" name="noticeDate" />
                     </label>
 
                     <div class="actions">
-                        <button type="submit" class="btn btn-primary">Upload Notice</button>
+                        <button type="submit" class="btn btn-primary" [disabled]="loading">Upload Notice</button>
                     </div>
                 </form>
 
@@ -55,30 +55,47 @@
             <div class="card-body">
                 <p class="muted">University-wide announcements, policies, events, and emergency notices.</p>
 
-                <ul class="notice-list">
-                    <li class="notice-item">No university notices available — add one to show here.</li>
-                </ul>
+                <div *ngIf="loading" class="muted">Loading notices…</div>
+
+                <ng-container *ngIf="!loading">
+                    <ul class="notice-list" *ngIf="notices && notices.length; else noUniversityNotices">
+                        <li class="notice-item" *ngFor="let notice of notices">
+                            <div class="notice-meta">
+                                <strong class="notice-title">{{ notice.title }}</strong>
+                                <span class="notice-date">{{ notice.notice_date | date:'mediumDate' }}</span>
+                            </div>
+                            <p class="notice-body">{{ notice.description }}</p>
+                        </li>
+                    </ul>
+                    <ng-template #noUniversityNotices>
+                        <ul class="notice-list">
+                            <li class="notice-item">No university notices available — add one to show here.</li>
+                        </ul>
+                    </ng-template>
+                </ng-container>
 
                 <div class="actions">
-                    <button type="button" class="btn btn-secondary">Refresh Notices</button>
+                    <button type="button" class="btn btn-secondary" (click)="loadNotices()" [disabled]="loading">Refresh Notices</button>
                 </div>
             </div>
         </aside>
     </div>
 
-    <div class="existing-notices notice-full-row card" *ngIf="notices && notices.length">
+    <div class="existing-notices notice-full-row card" *ngIf="!loading">
         <div class="card-body">
             <h4>Existing Notices</h4>
-            <ul class="notice-list">
+                    <ul class="notice-list" *ngIf="notices && notices.length; else noNotices">
                 <li class="notice-card" *ngFor="let notice of notices">
                     <div class="notice-meta">
                         <strong class="notice-title">{{ notice.title }}</strong>
-                        <span class="notice-date">{{ notice.createdAt | date:'short' }}</span>
+                        <span class="notice-date">{{ notice.notice_date | date:'short' }} • Created: {{ notice.created_at | date:'short' }}</span>
                     </div>
-                    <div class="notice-body">{{ notice.content }}</div>
-                    <div class="notice-attachment" *ngIf="notice.fileName">Attachment: {{ notice.fileName }}</div>
+                    <div class="notice-body">{{ notice.description }}</div>
                 </li>
             </ul>
+            <ng-template #noNotices>
+                <p class="muted">No notices have been created yet.</p>
+            </ng-template>
         </div>
     </div>
 

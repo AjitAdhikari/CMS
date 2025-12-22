@@ -1,42 +1,77 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { ToastrService } from 'ngx-toastr';
+import { Notice, NoticePayload, NoticeService } from 'src/app/services/notice.service';
 
 @Component({
   selector: 'app-notice-control',
   templateUrl: './notice-control.component.html',
   styleUrls: ['./notice-control.component.css']
 })
-export class NoticeControlComponent { 
-  currentView: 'admin' | 'university' = 'admin'; 
-  adminNotice = {
+export class NoticeControlComponent implements OnInit {
+  currentView: 'admin' | 'university' = 'admin';
+  adminNotice: { title: string; description: string; noticeDate: string } = {
     title: '',
-    content: '',
-    file: null as File | null
+    description: '',
+    noticeDate: ''
   };
- 
-  notices: Array<{ title: string; content: string; fileName?: string | null; createdAt: Date }> = [];
+
+  notices: Notice[] = [];
+  loading = false;
+
+  constructor(private noticeService: NoticeService, private toastr: ToastrService) {}
+
+  ngOnInit(): void {
+    this.loadNotices();
+  }
 
   selectView(view: 'admin' | 'university') {
     this.currentView = view;
   }
 
-  onFileSelected(event: Event) {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length) {
-      this.adminNotice.file = input.files[0];
-    } else {
-      this.adminNotice.file = null;
+  uploadAdminNotice() { 
+    if (!this.adminNotice.title || !this.adminNotice.description || !this.adminNotice.noticeDate) {
+      this.toastr.warning('Title, description, and date are required.');
+      return;
     }
+
+    const payload: NoticePayload = {
+      title: this.adminNotice.title.trim(),
+      description: this.adminNotice.description.trim(),
+      notice_date: this.adminNotice.noticeDate
+    };
+
+    this.loading = true;
+    this.noticeService.create(payload).subscribe({
+      next: () => {
+        this.toastr.success('Notice created');
+        this.adminNotice = { title: '', description: '', noticeDate: '' };
+        this.loadNotices(false);
+      },
+      error: (err) => {
+        this.loading = false;
+        const message = err?.error?.error || 'Failed to create notice';
+        this.toastr.error(message);
+      }
+    });
   }
 
-  uploadAdminNotice() { 
-    console.log('Uploading admin notice', this.adminNotice); 
-    this.notices.unshift({
-      title: this.adminNotice.title || '(no title)',
-      content: this.adminNotice.content || '',
-      fileName: this.adminNotice.file ? this.adminNotice.file.name : null,
-      createdAt: new Date()
+  loadNotices(showLoader: boolean = true) {
+    if (showLoader) {
+      this.loading = true;
+    }
+
+    this.noticeService.list().subscribe({
+      next: (response) => {
+        this.notices = (response?.items || []).sort((a, b) => 
+          new Date(b.notice_date).getTime() - new Date(a.notice_date).getTime()
+        );
+        this.loading = false;
+      },
+      error: (err) => {
+        this.loading = false;
+        const message = err?.error?.error || 'Failed to load notices';
+        this.toastr.error(message);
+      }
     });
- 
-    this.adminNotice = { title: '', content: '', file: null };
   }
 }

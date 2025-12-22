@@ -71,10 +71,18 @@
 
 		<aside class="panel announcements">
 			<h3 class="panel-title">Latest Announcements</h3>
-			<ul class="ann-list">
-				<li><a href="#"><strong>Exam Reminder:</strong> Physics Midterm on Monday.</a></li>
-				<li><a href="#"><strong>Event:</strong> Annual Tech Summit RSVP now open!</a></li>
+			<ul class="ann-list" *ngIf="announcements.length > 0; else noAnnouncements">
+				<li *ngFor="let announcement of announcements" class="ann-item">
+					<a class="ann-link" [routerLink]="['/admin/notice-control']" [queryParams]="{ noticeId: announcement.id }">
+						<strong>{{ announcement.title }}</strong>
+						<p class="ann-preview">{{ announcement.description.substring(0, 60) }}...</p>
+						<span class="ann-date">{{ announcement.notice_date | date: 'short' }}</span>
+					</a>
+				</li>
 			</ul>
+			<ng-template #noAnnouncements>
+				<p class="muted small">No announcements available.</p>
+			</ng-template>
 			<p class="muted small">Check the Notice Board for full details.</p>
 		</aside>
 	</main>

@@ -12,12 +12,13 @@
     </div>
 
     <div class="notice-list">
-        <div *ngIf="filteredNotices.length === 0" class="empty">No notices from {{ selectedSource }}.</div>
-        <ul *ngIf="filteredNotices.length > 0">
+        <div *ngIf="loading" class="empty">Loading notices…</div>
+        <div *ngIf="!loading && filteredNotices.length === 0" class="empty">No notices from {{ selectedSource }}.</div>
+        <ul *ngIf="!loading && filteredNotices.length > 0">
             <li *ngFor="let n of filteredNotices" class="notice-row">
                 <div class="notice-summary">
                     <div class="title">{{ n.title }}</div>
-                    <div class="meta">{{ n.date }}</div>
+                    <div class="meta">{{ n.notice_date | date:'mediumDate' }} • Created: {{ n.created_at | date:'mediumDate' }}</div>
                 </div>
                 <div class="actions">
                     <button type="button" (click)="viewNotice(n)">View</button>
@@ -28,8 +29,8 @@
 
     <div class="notice-detail" *ngIf="selectedNotice">
         <h3 class="detail-title">{{ selectedNotice.title }}</h3>
-        <div class="detail-meta">{{ selectedNotice.source }} — {{ selectedNotice.date }}</div>
-        <p class="detail-body">{{ selectedNotice.body }}</p>
+        <div class="detail-meta">{{ selectedNotice.notice_date | date:'mediumDate' }}</div>
+        <p class="detail-body">{{ selectedNotice.description }}</p>
         <button type="button" class="close-btn" (click)="closeNotice()">Close</button>
     </div>
 </div>
