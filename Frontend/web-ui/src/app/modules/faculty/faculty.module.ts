@@ -7,7 +7,6 @@ import { FacultyRoutingModule } from './faculty-routing.module';
 import { AssignmentsComponent } from './pages/assignments/assignments.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { GradesComponent } from './pages/grades/grades.component';
-import { NotesComponent } from './pages/notes/notes.component';
 import { NoticesComponent } from './pages/notices/notices.component';
 import { ScheduleComponent } from './pages/schedule/schedule.component';
 
@@ -17,7 +16,6 @@ import { ScheduleComponent } from './pages/schedule/schedule.component';
     AssignmentsComponent,
     GradesComponent,
     NoticesComponent,
-    NotesComponent,
     ScheduleComponent,
   ],
   imports: [

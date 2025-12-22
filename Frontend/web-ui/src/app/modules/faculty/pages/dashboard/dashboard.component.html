@@ -15,18 +15,6 @@
 					<div class="link-label">Manage Schedule</div>
 				</a>
 
-				<a class="link-card" routerLink="/faculty/notes">
-					<div class="link-icon bg-1">
-						<svg width="34" height="34" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-							<rect x="4" y="3" width="14" height="18" rx="2" stroke="#0f172a" stroke-width="1.2" />
-							<path d="M7 7h10M7 11h10M7 15h6" stroke="#0f172a" stroke-width="1.2" stroke-linecap="round"
-								stroke-linejoin="round" />
-							<path d="M16 3v4" stroke="#0f172a" stroke-width="1.2" stroke-linecap="round" />
-						</svg>
-					</div>
-					<div class="link-label">Notes</div>
-				</a>
-
 				<a class="link-card" routerLink="/faculty/assignments">
 					<div class="link-icon bg-2">
 						<svg width="34" height="34" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -66,10 +54,18 @@
 
 		<aside class="panel announcements">
 			<h3 class="panel-title">Latest Announcements</h3>
-			<ul class="ann-list">
-				<li><a href="#"><strong>Schedule Update:</strong> New lab timetable published.</a></li>
-				<li><a href="#"><strong>Assignment:</strong> Assignment 3 deadline extended.</a></li>
+			<ul class="ann-list" *ngIf="announcements.length > 0; else noAnnouncements">
+				<li *ngFor="let announcement of announcements" class="ann-item">
+					<a class="ann-link" [routerLink]="['/faculty/notices']" [queryParams]="{ noticeId: announcement.id }">
+						<strong>{{ announcement.title }}</strong>
+						<p class="ann-preview">{{ announcement.description.substring(0, 60) }}...</p>
+						<span class="ann-date">{{ announcement.notice_date | date: 'short' }}</span>
+					</a>
+				</li>
 			</ul>
+			<ng-template #noAnnouncements>
+				<p class="muted small">No announcements available.</p>
+			</ng-template>
 			<p class="muted small">See the notice board for full details.</p>
 		</aside>
 	</main>
