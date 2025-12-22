@@ -14,12 +14,12 @@ export class LoginComponent implements OnInit {
  isLoading: boolean = false;
   form: UntypedFormGroup;
   model: UserLoginRequestModel = {
-    username : "",
+    email : "",
     password : ""
   };
   constructor(private authService: AuthService,   private fb: UntypedFormBuilder, private router: Router){
     this.form = this.fb.group({
-      username: ['', Validators.required],
+      email: ['', Validators.required],
       password: ['', Validators.required],
     })
   }

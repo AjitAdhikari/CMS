@@ -32,6 +32,8 @@ export class AuthService {
         return;
       }
       StorageHelper.setToken(response.body.token);
+      StorageHelper.setLocalStorageItem('_user_details', JSON.stringify(response.body.user));
+
       this._router.navigate(['/admin/dashboard']);
     }
     );
