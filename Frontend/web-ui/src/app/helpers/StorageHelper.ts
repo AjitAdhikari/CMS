@@ -32,5 +32,11 @@ export default class StorageHelper
   {
     return window.localStorage.getItem(key);
   }
+
+  // Alias for clarity; some components call getLocalStorageItem
+  static getLocalStorageItem(key: string): any | null
+  {
+    return window.localStorage.getItem(key);
+  }
 }
 

@@ -1,17 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Course, CourseService } from '../../../../services/course.service';
-
-interface User {
-  id: number;
-  name: string;
-  email: string;
-  roles: string[];
-  status: 'Active' | 'Inactive';
-  password?: string;
-  semester?: number;
-  courseId?: number;
-  activity?: string;
-}
+import { User, UserService } from '../../../../services/user.service';
 
 @Component({
   selector: 'app-user-management',
@@ -30,19 +19,30 @@ export class UserManagementComponent implements OnInit {
   tempUser: Partial<User> = {};
   searchTerm = '';
   roleFilter = 'Admin';
+  loading = false;
+  errorMessage = '';
 
-  private nextId = 4;
-
-  constructor(private courseService: CourseService) {}
+  constructor(private courseService: CourseService, private userService: UserService) {}
 
   ngOnInit(): void {
     this.courses = this.courseService.getCourses();
-    // sample data
-    this.users = [
-      { id: 1, name: 'David Lee', email: 'david.lee@example.com', roles: ['Admin'], status: 'Active' },
-      { id: 2, name: 'Sara Powell', email: 'sara.powell@example.com', roles: ['Student'], status: 'Active', semester: 2, activity: 'Online' },
-      { id: 3, name: 'Mark Chan', email: 'mark.chan@example.com', roles: ['Faculty'], status: 'Inactive', courseId: undefined }
-    ];
+    this.loadUsers();
+  }
+
+  loadUsers(): void {
+    this.loading = true;
+    this.errorMessage = '';
+    this.userService.list().subscribe({
+      next: (users) => {
+        this.users = users;
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Failed to load users', err);
+        this.errorMessage = 'Failed to load users.';
+        this.loading = false;
+      }
+    });
   }
 
   get filteredUsers(): User[] {
@@ -54,10 +54,10 @@ export class UserManagementComponent implements OnInit {
     });
   }
 
-  getCourseTitle(courseId?: number): string {
-    if (!courseId) return '-';
-    const course = this.courses.find(c => c.id === courseId);
-    return course ? course.title : '-';
+  getSubjectsDisplay(subjects?: string): string {
+    if (!subjects) return '-';
+    const course = this.courses.find(c => c.title === subjects);
+    return course ? course.title : subjects;
   }
 
   get modalTitle(): string {
@@ -77,7 +77,7 @@ export class UserManagementComponent implements OnInit {
     this.currentAddRole = role;
     this.tempUser = { name: '', email: '', roles: [role], status: 'Active' };
     if (role === 'Student') this.tempUser.semester = 1;
-    if (role === 'Faculty') this.tempUser.courseId = undefined;
+    if (role === 'Faculty') this.tempUser.subjects = undefined;
     this.showForm = true;
   }
 
@@ -112,46 +112,70 @@ export class UserManagementComponent implements OnInit {
       return;
     }
 
-    if (this.editing) {
-      const idx = this.users.findIndex(u => u.id === t.id);
-      if (idx > -1) {
-        const original = this.users[idx];
-        const updated: User = {
-          id: original.id,
-          name: t.name,
-          email: t.email,
-          roles: original.roles,
-          status: t.status || original.status,
-          password: t.password || original.password,
-          semester: original.semester,
-          courseId: original.courseId
-        };
-        if ((t as any).semester !== undefined) updated.semester = (t as any).semester;
-        if ((t as any).courseId !== undefined) updated.courseId = (t as any).courseId;
-        this.users[idx] = updated;
-      } 
+    // Backend requires password on create (especially for Faculty/Student)
+    if (!this.editing && !t.password) {
+      alert('Please provide a password.');
+      return;
+    }
+    this.loading = true;
+
+    if (this.editing && t.id !== undefined) {
+      const payload: Partial<User> & { roles: string[] } = {
+        ...t,
+        roles: this.tempUser.roles || [this.currentAddRole]
+      };
+
+      this.userService.update(t.id, payload).subscribe({
+        next: () => {
+          this.loading = false;
+          this.closeForm();
+          this.loadUsers();
+        },
+        error: (err) => {
+          console.error('Failed to update user', err);
+          alert('Failed to update user.');
+          this.loading = false;
+        }
+      });
     } else {
       const role = this.currentAddRole || (this.roleFilter as 'Admin' | 'Student' | 'Faculty');
-      const newUser: User = {
-        id: this.nextId++,
-        name: t.name,
-        email: t.email,
+      const payload: Partial<User> & { roles: string[] } = {
+        ...t,
         roles: [role],
         status: t.status || 'Active',
-        password: t.password,
-        semester: role === 'Student' ? ((t as any).semester || 1) : undefined,
-        courseId: role === 'Faculty' ? ((t as any).courseId || undefined) : undefined
+        semester: role === 'Student' ? ((t as any).semester || 1) : undefined
       };
-      this.users.unshift(newUser);
-    }
 
-    this.closeForm();
+      this.userService.create(payload).subscribe({
+        next: () => {
+          this.loading = false;
+          this.closeForm();
+          this.loadUsers();
+        },
+        error: (err) => {
+          console.error('Failed to create user', err);
+          alert('Failed to create user.');
+          this.loading = false;
+        }
+      });
+    }
   }
 
-  deleteUser(id?: number): void {
+  deleteUser(id?: number | string): void {
     if (!id) return;
     if (!confirm('Delete this user?')) return;
-    this.users = this.users.filter(u => u.id !== id);
+    this.loading = true;
+    this.userService.delete(id).subscribe({
+      next: () => {
+        this.loading = false;
+        this.loadUsers();
+      },
+      error: (err) => {
+        console.error('Failed to delete user', err);
+        alert('Failed to delete user.');
+        this.loading = false;
+      }
+    });
   }
 
   toggleRole(role: string): void {

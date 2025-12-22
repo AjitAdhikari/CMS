@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
+import { PageSettingComponent } from '../setting/page-setting/page-setting.component';
 import { AssignmentsComponent } from './pages/assignments/assignments.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { FeesComponent } from './pages/fees/fees.component';
@@ -13,7 +14,8 @@ const routes: Routes = [
   { path: 'schedules', component: ScheduleComponent },
   { path: 'assignments', component: AssignmentsComponent },
   { path: 'notices', component: NoticeComponent },
-  { path: 'fees', component: FeesComponent }
+  { path: 'fees', component: FeesComponent },
+  { path: 'setting', component: PageSettingComponent }
 ];
 
 @NgModule({

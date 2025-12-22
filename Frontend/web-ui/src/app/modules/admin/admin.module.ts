@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
@@ -24,6 +25,7 @@ import { UserManagementComponent } from './pages/user-management/user-management
   ],
   imports: [
     CommonModule,
+    HttpClientModule,
     AdminRoutingModule,
     LayoutModule,
     HeaderModule,

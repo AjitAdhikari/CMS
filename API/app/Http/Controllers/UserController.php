@@ -13,6 +13,40 @@ use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
+    // GET: List users
+    public function index()
+    {
+        try {
+            $users = DB::table('users')
+                ->leftJoin('user_profiles', 'users.id', '=', 'user_profiles.user_id')
+                ->select(
+                    'users.id',
+                    'users.name',
+                    'users.email',
+                    'users.active_status',
+                    'user_profiles.role',
+                    'user_profiles.semesters',
+                    'user_profiles.subjects'
+                )
+                ->get()
+                ->map(function ($u) {
+                    return [
+                        'id' => $u->id,
+                        'name' => $u->name,
+                        'email' => $u->email,
+                        'active_status' => $u->active_status,
+                        'role' => $u->role,
+                        'semesters' => $u->semesters,
+                        'subjects' => $u->subjects,
+                    ];
+                });
+
+            return response()->json($users);
+        } catch (\Exception $ex) {
+            return response()->json(['error' => $ex->getMessage()], 400);
+        }
+    }
+
     // POST: Create Document
     public function create(Request $request)
     {

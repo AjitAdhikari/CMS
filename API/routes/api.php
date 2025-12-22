@@ -23,7 +23,7 @@ Route::prefix('auth')->group(function () {
 //http://localhost:8000/api/users
 Route::prefix('users')->group(function(){
     Route::post('/', [UserController::class, 'create']);
-    Route::post('/{id}', [USerController::class, 'update']);
+    Route::post('/{id}', [UserController::class, 'update']);
     Route::delete('/{id}',[UserController::class, 'delete']);
     Route::get('/{id}', [UserController::class, 'get']);
     Route::get('/', [UserController::class, 'index']);
@@ -35,14 +35,14 @@ Route::prefix('fees')->group(function () {
     Route::post('/', [FeeController::class, 'create']);
     Route::post('/details', [FeeController::class, 'create_fee_details']);
     Route::post('/{id}', [FeeController::class, 'store']);
-    Route::post('/details/{id}', [FeeController::class], 'update_fee_details');
+    Route::post('/details/{id}', [FeeController::class, 'update_fee_details']);
     Route::delete('/{id}', [FeeController::class, 'delete']);
     Route::delete('/details/{id}', [FeeController::class, 'delete_fee_details']);
     Route::get('/{user_id}', [FeeController::class, 'show']);
     Route::get('/details/{user_id}', [FeeController::class, 'show_fee_details']);
     Route::get('/', [FeeController::class, 'index']);
 });
-
+//http://localhost:8000/api/notices
 Route::prefix('notices')->group(function () {
     Route::post('/', [NoticeController::class, 'create']);
     Route::post('/{id}', [NoticeController::class, 'update']);

@@ -17,6 +17,8 @@
 	</header>
 
 	<section class="um-table panel">
+		<div *ngIf="errorMessage" class="muted">{{ errorMessage }}</div>
+		<div *ngIf="loading" class="muted">Loading users...</div>
 		<table>
 			<thead>
 				<tr *ngIf="roleFilter === 'Student'">
@@ -29,7 +31,7 @@
 				<tr *ngIf="roleFilter === 'Faculty'">
 					<th>Name</th>
 					<th>Email</th>
-					<th>Course</th>
+					<th>Subjects</th>
 					<th>Status</th>
 					<th class="actions">Actions</th>
 				</tr>
@@ -58,7 +60,7 @@
 					<tr *ngFor="let u of filteredUsers">
 						<td>{{ u.name }}</td>
 						<td>{{ u.email }}</td>
-						<td>{{ getCourseTitle(u.courseId) }}</td>
+						<td>{{ getSubjectsDisplay(u.subjects) }}</td>
 						<td>{{ u.status }}</td>
 						<td class="actions">
 							<button class="btn small" (click)="openEdit(u)">Edit</button>
@@ -148,10 +150,10 @@
 				<input type="password" [(ngModel)]="tempUser.password" placeholder="Set password" />
 			</div>
 			<div *ngIf="currentAddRole === 'Faculty' || (editing && tempUser.roles?.includes('Faculty'))" class="form-row">
-				<label>Course</label>
-				<select [(ngModel)]="tempUser.courseId">
+				<label>Course/Subject</label>
+				<select [(ngModel)]="tempUser.subjects">
 					<option [ngValue]="undefined">Select a course</option>
-					<option *ngFor="let course of courses" [ngValue]="course.id">{{ course.title }}</option>
+					<option *ngFor="let course of courses" [ngValue]="course.title">{{ course.title }}</option>
 				</select>
 			</div>
 			<div *ngIf="currentAddRole === 'Faculty' || (editing && tempUser.roles?.includes('Faculty'))" class="form-row">

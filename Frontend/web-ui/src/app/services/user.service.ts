@@ -1,0 +1,91 @@
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable, map } from 'rxjs';
+import { environment } from 'src/environments/environment';
+
+export type UserRole = 'Admin' | 'Student' | 'Faculty';
+export type UserStatus = 'Active' | 'Inactive';
+
+// API response shape (backend currently returns these fields)
+export interface ApiUser {
+  id: number | string;
+  name: string;
+  email: string;
+  active_status?: number;
+  role?: string;
+  subjects?: string | null;
+  semesters?: string | number | null;
+}
+
+// Frontend model used by the component
+export interface User {
+  id: number | string;
+  name: string;
+  email: string;
+  roles: string[];
+  status: UserStatus;
+  password?: string;
+  semester?: number;
+  subjects?: string;
+  activity?: string;
+}
+
+@Injectable({ providedIn: 'root' })
+export class UserService {
+  private readonly baseUrl = `${environment.ApiUrl}/users`;
+
+  constructor(private http: HttpClient) {}
+
+  list(): Observable<User[]> {
+    return this.http.get<ApiUser[]>(this.baseUrl).pipe(map(users => users.map(u => this.toUser(u))));
+  }
+
+  create(user: Partial<User> & { roles: string[] }): Observable<any> {
+    const payload = this.toApiPayload(user);
+    return this.http.post(`${this.baseUrl}`, payload);
+  }
+
+  update(id: number | string, user: Partial<User> & { roles: string[] }): Observable<any> {
+    const payload = this.toApiPayload({ ...user, id });
+    return this.http.post(`${this.baseUrl}/${id}`, payload);
+  }
+
+  delete(id: number | string): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/${id}`);
+  }
+
+  private toUser(api: ApiUser): User {
+    const role = this.normalizeRole(api.role);
+    return {
+      id: api.id,
+      name: api.name,
+      email: api.email,
+      roles: role ? [role] : [],
+      status: api.active_status === 0 ? 'Inactive' : 'Active',
+      semester: api.semesters ? Number(api.semesters) : undefined,
+      subjects: api.subjects || undefined
+    };
+  }
+
+  private normalizeRole(role?: string): UserRole | '' {
+    if (!role) return '';
+    const r = role.toLowerCase();
+    if (r === 'admin') return 'Admin';
+    if (r === 'student') return 'Student';
+    if (r === 'faculty') return 'Faculty';
+    return '';
+  }
+
+  private toApiPayload(user: Partial<User> & { roles?: string[] }) {
+    return {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      password: user.password,
+      active_status: user.status === 'Inactive' ? 0 : 1,
+      role: user.roles && user.roles.length ? user.roles[0] : user.roles,
+      semesters: user.semester !== undefined ? String(user.semester) : null,
+      subjects: user.subjects || null
+    };
+  }
+}

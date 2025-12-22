@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import StorageHelper from 'src/app/helpers/StorageHelper';
 
 @Component({
   selector: 'app-header',
@@ -10,6 +11,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   userName = 'User';
   time: string = '';
   date: string = '';
+  userRole: string = 'admin';
   private timerId: any;
 
   constructor(private router: Router) {}
@@ -17,6 +19,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.updateTime();
     this.timerId = setInterval(() => this.updateTime(), 1000);
+    this.getUserRole();
   }
 
   ngOnDestroy(): void {
@@ -27,6 +30,35 @@ export class HeaderComponent implements OnInit, OnDestroy {
     const now = new Date();
     this.time = now.toLocaleTimeString();
     this.date = now.toLocaleDateString();
+  }
+
+  private getUserRole(): void {
+    const stored = StorageHelper.getLocalStorageItem('_user_details');
+    if (stored) {
+      try {
+        const user = JSON.parse(stored);
+        // Determine role from URL path or stored data
+        const urlPath = this.router.url;
+        if (urlPath.includes('/admin')) {
+          this.userRole = 'admin';
+        } else if (urlPath.includes('/student')) {
+          this.userRole = 'student';
+        } else if (urlPath.includes('/faculty')) {
+          this.userRole = 'faculty';
+        }
+      } catch (e) {
+        this.userRole = 'admin'; // default
+      }
+    }
+  }
+
+  getSettingsRoute(): string {
+    if (this.userRole === 'student') {
+      return '/student/setting';
+    } else if (this.userRole === 'faculty') {
+      return '/faculty/setting';
+    }
+    return '/admin/setting';
   }
 
   logOut(){

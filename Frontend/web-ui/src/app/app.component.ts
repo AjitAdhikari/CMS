@@ -50,4 +50,12 @@ export class AppComponent {
       return false;
     }
   }
+
+  isLoginRoute(): boolean {
+    try {
+      return this.router.url === '/login';
+    } catch {
+      return false;
+    }
+  }
 }
