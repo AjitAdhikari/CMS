@@ -34,7 +34,17 @@ export class AuthService {
       StorageHelper.setToken(response.body.token);
       StorageHelper.setLocalStorageItem('_user_details', JSON.stringify(response.body.user));
 
-      this._router.navigate(['/admin/dashboard']);
+      let userDetails = response.body.user;
+      console.log(userDetails);
+      if(userDetails.role == 'admin')
+      {
+        this._router.navigate(['/admin/dashboard']);
+      } else if (userDetails.role == 'faculty')
+      {
+        this._router.navigate(['/faculty/dashboard']);
+      } else {
+        this._router.navigate(['/student/dashboard']);
+      }
     }
     );
   }
