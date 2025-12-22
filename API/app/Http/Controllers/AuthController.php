@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\UserProfile;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
@@ -19,6 +20,9 @@ class AuthController extends Controller
         ]);
 
         $user = User::where('email', $request->email)->first();
+        $user_profile = UserProfile::where('user_id', $user->id)->first();
+
+        $user->role = $user_profile->role;
 
         if (! $user || ! Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages([
