@@ -49,10 +49,11 @@
                 <thead>
                     <tr>
                         <th>Course</th>
+                        <th>Department</th>
                         <th>Faculty</th>
                         <th>Day</th>
                         <th>Time</th>
-                        <th>Activity</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -63,10 +64,11 @@
                                 <span class="course-id">ID: {{ schedule.courseId }}</span>
                             </div>
                         </td>
+                        <td>{{ schedule.department }}</td>
                         <td>{{ schedule.facultyName }}</td>
                         <td>{{ schedule.dayOfWeek }}</td>
                         <td>
-                            <span class="time-text">{{ schedule.startTime }} - {{ schedule.endTime }}</span>
+                            <span class="time-text">{{ schedule.startTime || '--:--' }} - {{ schedule.endTime || '--:--' }}</span>
                         </td>
                         <td>
                             <div class="action-buttons">
@@ -122,6 +124,14 @@
             </div>
 
             <div class="form-group">
+                <label for="department">Department *</label>
+                <select id="department" formControlName="department" class="form-control">
+                    <option value="">Select a department</option>
+                    <option *ngFor="let dept of departments" [value]="dept.value">{{ dept.label }}</option>
+                </select>
+            </div>
+
+            <div class="form-group">
                 <label for="facultyId">Faculty *</label>
                 <select id="facultyId" formControlName="facultyId" class="form-control">
                     <option value="">Select a faculty</option>
@@ -149,12 +159,6 @@
             </div>
 
             <div class="form-group">
-                <label for="activity">Activity *</label>
-                <input type="text" id="activity" formControlName="activity" class="form-control"
-                    placeholder="e.g., Lecture, Lab Work, Tutorial" />
-            </div>
-
-            <div class="form-group">
                 <label for="scheduleType">Schedule Type *</label>
                 <select id="scheduleType" formControlName="scheduleType" class="form-control">
                     <option *ngFor="let type of scheduleTypes" [value]="type.value">{{ type.label }}</option>
@@ -170,8 +174,8 @@
         </form>
 
         <div class="modal-footer">
-            <button class="btn btn-secondary" (click)="closeAddModal()">Cancel</button>
-            <button class="btn btn-primary" (click)="createSchedule()" [disabled]="scheduleForm.invalid">Create
+            <button type="button" class="btn btn-secondary" (click)="closeAddModal()">Cancel</button>
+            <button type="button" class="btn btn-primary" (click)="createSchedule()" [disabled]="scheduleForm.invalid">Create
                 Schedule</button>
         </div>
     </div>
@@ -205,6 +209,14 @@
             </div>
 
             <div class="form-group">
+                <label for="departmentEdit">Department *</label>
+                <select id="departmentEdit" formControlName="department" class="form-control">
+                    <option value="">Select a department</option>
+                    <option *ngFor="let dept of departments" [value]="dept.value">{{ dept.label }}</option>
+                </select>
+            </div>
+
+            <div class="form-group">
                 <label for="facultyIdEdit">Faculty *</label>
                 <select id="facultyIdEdit" formControlName="facultyId" class="form-control">
                     <option value="">Select a faculty</option>
@@ -231,12 +243,6 @@
             </div>
 
             <div class="form-group">
-                <label for="activityEdit">Activity *</label>
-                <input type="text" id="activityEdit" formControlName="activity" class="form-control"
-                    placeholder="e.g., Lecture, Lab Work, Tutorial" />
-            </div>
-
-            <div class="form-group">
                 <label for="scheduleTypeEdit">Schedule Type *</label>
                 <select id="scheduleTypeEdit" formControlName="scheduleType" class="form-control">
                     <option *ngFor="let type of scheduleTypes" [value]="type.value">{{ type.label }}</option>
@@ -252,8 +258,8 @@
         </form>
 
         <div class="modal-footer">
-            <button class="btn btn-secondary" (click)="closeEditModal()">Cancel</button>
-            <button class="btn btn-primary" (click)="updateSchedule()">Update Schedule</button>
+            <button type="button" class="btn btn-secondary" (click)="closeEditModal()">Cancel</button>
+            <button type="button" class="btn btn-primary" (click)="updateSchedule()">Update Schedule</button>
         </div>
     </div>
 </div>

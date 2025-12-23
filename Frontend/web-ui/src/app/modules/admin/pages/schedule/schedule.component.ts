@@ -6,12 +6,12 @@ export interface ClassSchedule {
   id: number;
   courseId: number;
   courseName: string;
+  department?: string;
   facultyId?: number;
   facultyName?: string;
   dayOfWeek: string;
   startTime: string;
   endTime: string;
-  activity: string;
   scheduleType: 'regular' | 'one-time' | 'lab' | 'tutorial';
   isActive: boolean;
   createdAt?: string;
@@ -25,6 +25,8 @@ export interface ClassSchedule {
 })
 export class ScheduleComponent implements OnInit {
   schedules: ClassSchedule[] = [];
+
+  private readonly storageKey = 'app_class_schedules';
   
   // Form controls
   scheduleForm!: FormGroup;
@@ -62,6 +64,12 @@ export class ScheduleComponent implements OnInit {
     { id: 4, name: 'Prof. Emily Davis' }
   ];
 
+  departments = [
+    { value: 'BBA', label: 'BBA' },
+    { value: 'BCA', label: 'BCA' },
+    { value: 'BBA-TT', label: 'BBA-TT' }
+  ];
+
   constructor(private fb: FormBuilder) {
     this.initializeForms();
   }
@@ -73,11 +81,11 @@ export class ScheduleComponent implements OnInit {
   initializeForms(): void {
     this.scheduleForm = this.fb.group({
       courseId: ['', Validators.required],
+      department: ['', Validators.required],
       facultyId: ['', Validators.required],
       dayOfWeek: ['', Validators.required],
       startTime: ['', Validators.required],
       endTime: ['', Validators.required],
-      activity: ['', Validators.required],
       scheduleType: ['regular', Validators.required],
       isActive: [true]
     });
@@ -85,12 +93,12 @@ export class ScheduleComponent implements OnInit {
     this.editForm = this.fb.group({
       courseId: [{ value: '', disabled: true }, Validators.required],
       courseName: [{ value: '', disabled: true }, Validators.required],
+      department: ['', Validators.required],
       facultyId: ['', Validators.required],
       facultyName: [{ value: '', disabled: true }],
       dayOfWeek: ['', Validators.required],
       startTime: ['', Validators.required],
       endTime: ['', Validators.required],
-      activity: ['', Validators.required],
       scheduleType: ['regular', Validators.required],
       isActive: [true]
     });
@@ -99,59 +107,21 @@ export class ScheduleComponent implements OnInit {
   loadSchedules(): void {
     this.isLoading = true;
     this.clearMessages();
-    
-    // Replace with actual API call
-    setTimeout(() => {
-      this.schedules = [
-        {
-          id: 1,
-          courseId: 101,
-          courseName: 'Advanced Data Structures',
-          facultyId: 1,
-          facultyName: 'Dr. John Smith',
-          dayOfWeek: 'Monday',
-          startTime: '09:00',
-          endTime: '10:30',
-          activity: 'Lecture',
-          scheduleType: 'regular',
-          isActive: true,
-          createdAt: '2025-12-01',
-          updatedAt: '2025-12-20'
-        },
-        {
-          id: 2,
-          courseId: 102,
-          courseName: 'Web Development',
-          facultyId: 2,
-          facultyName: 'Prof. Sarah Johnson',
-          dayOfWeek: 'Wednesday',
-          startTime: '11:00',
-          endTime: '12:30',
-          activity: 'Practical Session',
-          scheduleType: 'regular',
-          isActive: true,
-          createdAt: '2025-12-01',
-          updatedAt: '2025-12-20'
-        },
-        {
-          id: 3,
-          courseId: 103,
-          courseName: 'Database Management',
-          facultyId: 3,
-          facultyName: 'Dr. Michael Brown',
-          dayOfWeek: 'Friday',
-          startTime: '14:00',
-          endTime: '15:30',
-          activity: 'Lab Work',
-          scheduleType: 'lab',
-          isActive: true,
-          createdAt: '2025-12-01',
-          updatedAt: '2025-12-20'
-        }
-      ];
-      
+
+    try {
+      const cached = localStorage.getItem(this.storageKey);
+      if (cached) {
+        this.schedules = this.sanitizeSchedules(JSON.parse(cached));
+      } else {
+        this.schedules = this.sanitizeSchedules(this.getSeedSchedules());
+        this.persistSchedules();
+      }
+    } catch (error) {
+      console.error('Failed to load schedules from storage', error);
+      this.schedules = this.sanitizeSchedules(this.getSeedSchedules());
+    } finally {
       this.isLoading = false;
-    }, 500);
+    }
   }
 
   openAddModal(): void {
@@ -176,7 +146,6 @@ export class ScheduleComponent implements OnInit {
       dayOfWeek: schedule.dayOfWeek,
       startTime: schedule.startTime,
       endTime: schedule.endTime,
-      activity: schedule.activity,
       scheduleType: schedule.scheduleType,
       isActive: schedule.isActive
     });
@@ -207,7 +176,6 @@ export class ScheduleComponent implements OnInit {
       dayOfWeek: formData.dayOfWeek,
       startTime: formData.startTime,
       endTime: formData.endTime,
-      activity: formData.activity,
       scheduleType: formData.scheduleType,
       isActive: formData.isActive,
       createdAt: new Date().toISOString().split('T')[0],
@@ -215,6 +183,7 @@ export class ScheduleComponent implements OnInit {
     };
 
     this.schedules.push(newSchedule);
+    this.persistSchedules();
     this.successMessage = 'Schedule created successfully!';
     this.closeAddModal();
     setTimeout(() => this.clearMessages(), 3000);
@@ -239,11 +208,11 @@ export class ScheduleComponent implements OnInit {
           dayOfWeek: formData.dayOfWeek,
           startTime: formData.startTime,
           endTime: formData.endTime,
-          activity: formData.activity,
           scheduleType: formData.scheduleType,
           isActive: formData.isActive,
           updatedAt: new Date().toISOString().split('T')[0]
         };
+        this.persistSchedules();
         this.successMessage = 'Schedule updated successfully!';
         this.closeEditModal();
         setTimeout(() => this.clearMessages(), 3000);
@@ -256,6 +225,7 @@ export class ScheduleComponent implements OnInit {
       const index = this.schedules.findIndex(s => s.id === schedule.id);
       if (index !== -1) {
         this.schedules.splice(index, 1);
+        this.persistSchedules();
         this.successMessage = 'Schedule deleted successfully!';
         setTimeout(() => this.clearMessages(), 3000);
       }
@@ -274,6 +244,85 @@ export class ScheduleComponent implements OnInit {
 
   getScheduleDisplay(schedule: ClassSchedule): string {
     return `${schedule.courseName} - ${schedule.dayOfWeek} ${schedule.startTime}-${schedule.endTime}`;
+  }
+
+  private persistSchedules(): void {
+    try {
+      localStorage.setItem(this.storageKey, JSON.stringify(this.schedules));
+    } catch (error) {
+      console.error('Failed to persist schedules to storage', error);
+    }
+  }
+
+  private getSeedSchedules(): ClassSchedule[] {
+    return [
+      {
+        id: 1,
+        courseId: 101,
+        courseName: 'Advanced Data Structures',
+        facultyId: 1,
+        facultyName: 'Dr. John Smith',
+        dayOfWeek: 'Monday',
+        startTime: '09:00',
+        endTime: '10:30',
+        scheduleType: 'regular',
+        isActive: true,
+        createdAt: '2025-12-01',
+        updatedAt: '2025-12-20'
+      },
+      {
+        id: 2,
+        courseId: 102,
+        courseName: 'Web Development',
+        facultyId: 2,
+        facultyName: 'Prof. Sarah Johnson',
+        dayOfWeek: 'Wednesday',
+        startTime: '11:00',
+        endTime: '12:30',
+        scheduleType: 'regular',
+        isActive: true,
+        createdAt: '2025-12-01',
+        updatedAt: '2025-12-20'
+      },
+      {
+        id: 3,
+        courseId: 103,
+        courseName: 'Database Management',
+        facultyId: 3,
+        facultyName: 'Dr. Michael Brown',
+        dayOfWeek: 'Friday',
+        startTime: '14:00',
+        endTime: '15:30',
+        scheduleType: 'lab',
+        isActive: true,
+        createdAt: '2025-12-01',
+        updatedAt: '2025-12-20'
+      }
+    ];
+  }
+
+  private sanitizeSchedules(raw: any[]): ClassSchedule[] {
+    if (!Array.isArray(raw)) {
+      return [];
+    }
+
+    return raw.map((item, index) => {
+      const id = typeof item.id === 'number' ? item.id : index + 1;
+      return {
+        id,
+        courseId: Number(item.courseId) || 0,
+        courseName: item.courseName || '',
+        facultyId: item.facultyId ? Number(item.facultyId) : undefined,
+        facultyName: item.facultyName || '',
+        dayOfWeek: item.dayOfWeek || '',
+        startTime: item.startTime || '',
+        endTime: item.endTime || '',
+        scheduleType: item.scheduleType || 'regular',
+        isActive: Boolean(item.isActive),
+        createdAt: item.createdAt || new Date().toISOString().split('T')[0],
+        updatedAt: item.updatedAt || item.createdAt || new Date().toISOString().split('T')[0]
+      };
+    });
   }
 }
 

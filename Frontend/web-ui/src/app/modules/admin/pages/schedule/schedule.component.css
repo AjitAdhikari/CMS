@@ -217,17 +217,8 @@
 }
 
 .schedules-table td:nth-child(5) {
-  min-width: 110px;
-  max-width: 130px;
-}
-
-.schedules-table td:nth-child(6) {
-  min-width: 100px;
-  max-width: 120px;
-}
-
-.schedules-table td:nth-child(7) {
-  min-width: 100px;
+  min-width: 120px;
+  max-width: 140px;
   text-align: center;
   flex-shrink: 0;
 }
