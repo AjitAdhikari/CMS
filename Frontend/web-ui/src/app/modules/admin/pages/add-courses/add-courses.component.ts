@@ -8,10 +8,11 @@ import { Course, CourseService } from '../../../../services/course.service';
   styleUrls: ['./add-courses.component.css']
 })
 export class AddCoursesComponent {
-  model = { title: '', code: '', description: '' };
+  model = { title: '', code: '', department: '', description: '', syllabus: null as File | null };
   successMessage = '';
   courses: Course[] = [];
   editingId: number | null = null;
+  syllabusFileName = '';
 
   constructor(private courseService: CourseService) {
     this.courses = this.courseService.getCourses();
@@ -24,7 +25,9 @@ export class AddCoursesComponent {
       this.courseService.updateCourse(this.editingId, {
         title: this.model.title,
         code: this.model.code,
-        description: this.model.description
+        department: this.model.department,
+        description: this.model.description,
+        syllabus: this.model.syllabus
       });
       this.successMessage = `Course "${this.model.title}" updated.`;
       this.editingId = null;
@@ -32,19 +35,29 @@ export class AddCoursesComponent {
       const added = this.courseService.addCourse({
         title: this.model.title,
         code: this.model.code,
-        description: this.model.description
+        department: this.model.department,
+        description: this.model.description,
+        syllabus: this.model.syllabus
       });
       this.successMessage = `Course "${added.title}" added.`;
     }
     
-    this.model = { title: '', code: '', description: '' };
+    this.model = { title: '', code: '', department: '', description: '', syllabus: null };
+    this.syllabusFileName = '';
     this.courses = this.courseService.getCourses();
     form.resetForm();
     setTimeout(() => this.successMessage = '', 3500);
   }
 
   edit(course: Course) {
-    this.model = { title: course.title, code: course.code, description: course.description || '' };
+    this.model = { 
+      title: course.title, 
+      code: course.code, 
+      department: course.department || '',
+      description: course.description || '',
+      syllabus: null
+    };
+    this.syllabusFileName = '';
     this.editingId = course.id;
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -60,6 +73,26 @@ export class AddCoursesComponent {
 
   cancel() {
     this.editingId = null;
-    this.model = { title: '', code: '', description: '' };
+    this.model = { title: '', code: '', department: '', description: '', syllabus: null };
+    this.syllabusFileName = '';
+  }
+
+  onSyllabusSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const files = input.files;
+    
+    if (files && files.length > 0) {
+      const file = files[0];
+      const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+      
+      if (validTypes.includes(file.type)) {
+        this.model.syllabus = file;
+        this.syllabusFileName = file.name;
+      } else {
+        this.successMessage = 'Please upload a valid file (PDF, DOC, DOCX)';
+        setTimeout(() => this.successMessage = '', 3500);
+        input.value = '';
+      }
+    }
   }
 }
