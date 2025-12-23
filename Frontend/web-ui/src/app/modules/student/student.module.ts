@@ -7,6 +7,7 @@ import { ScheduleComponent } from './pages/schedule/schedule.component';
 import { NoticeComponent } from './pages/notice/notice.component';
 import { FeesComponent } from './pages/fees/fees.component';
 import { AssignmentsComponent } from './pages/assignments/assignments.component';
+import { ResultsComponent } from './pages/results/results.component';
 
 
 @NgModule({
@@ -15,7 +16,8 @@ import { AssignmentsComponent } from './pages/assignments/assignments.component'
     ScheduleComponent,
     NoticeComponent,
     FeesComponent,
-    AssignmentsComponent
+    AssignmentsComponent,
+    ResultsComponent
   ],
   imports: [
     CommonModule,
