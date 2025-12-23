@@ -1,21 +1,59 @@
 <div class="assignments-card">
 	<div class="assignments-header">
-		<h2>Manage Assignments</h2>
-		<label class="upload-btn" for="assignmentFileTop" (dragover)="$event.preventDefault()" (drop)="onDrop($event)">
-			Upload New Assignment
-		</label>
-		<input id="assignmentFileTop" type="file" hidden (change)="onFileSelected($event)" />
+		<h2>Create New Assignment</h2>
 	</div>
 
-	<p class="muted">File upload and deadline timer functionality goes here.</p>
+	<form (ngSubmit)="submitAssignment(title.value, description.value, due.value)" #assignmentForm="ngForm" style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 28px;">
+		<div class="form-group">
+			<label for="title" style="display: block; margin-bottom: 6px; font-weight: 600; color: #374151; font-size: 14px;">Assignment Title *</label>
+			<input #title type="text" id="title" placeholder="Enter assignment title" required style="width: 100%; padding: 10px; border: 1px solid #E5E7EB; border-radius: 6px; font-size: 14px; font-family: inherit;" />
+		</div>
+
+		<div class="form-group">
+			<label for="due" style="display: block; margin-bottom: 6px; font-weight: 600; color: #374151; font-size: 14px;">Due Date *</label>
+			<input #due type="date" id="due" required style="width: 100%; padding: 10px; border: 1px solid #E5E7EB; border-radius: 6px; font-size: 14px; font-family: inherit;" />
+		</div>
+
+		<div class="form-group">
+			<label for="description" style="display: block; margin-bottom: 6px; font-weight: 600; color: #374151; font-size: 14px;">Description</label>
+			<textarea #description id="description" placeholder="Enter assignment description" style="width: 100%; padding: 10px; border: 1px solid #E5E7EB; border-radius: 6px; font-size: 14px; font-family: inherit; min-height: 120px; resize: vertical;"></textarea>
+		</div>
+
+		<div class="form-group">
+			<label style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151; font-size: 14px;">File Upload (optional)</label>
+			<label for="assignmentFile" style="display: inline-block; padding: 10px 16px; background: #EEF2FF; color: #4F46E5; border-radius: 8px; cursor: pointer; border: 1px solid rgba(79, 70, 229, 0.12); font-weight: 500;">
+				Choose File
+			</label>
+			<input id="assignmentFile" type="file" hidden (change)="onFileSelected($event)" />
+		</div>
+
+		<div *ngIf="selectedFiles.length > 0" style="border-top: 1px dashed #E6E6E6; padding-top: 12px; margin-top: 8px;">
+			<p style="font-size: 13px; color: #6B7280; margin: 0 0 8px 0;">Selected Files:</p>
+			<div *ngFor="let f of selectedFiles; let i = index" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0;">
+				<span style="color: #111827;">{{ f.name }}</span>
+				<button type="button" (click)="removeFile(i)" style="background: transparent; border: none; color: #DC2626; cursor: pointer; font-size: 13px;">Remove</button>
+			</div>
+		</div>
+
+		<div style="display: flex; gap: 12px; margin-top: 8px;">
+			<button type="submit" style="padding: 10px 20px; background: #4F46E5; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 14px;">
+				Create Assignment
+			</button>
+			<button type="button" (click)="clearForm()" style="padding: 10px 20px; background: #E5E7EB; color: #374151; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 14px;">
+				Clear
+			</button>
+		</div>
+	</form>
 
 	<div class="divider"></div>
+
+	<h3 style="margin: 0 0 16px 0; font-size: 18px; color: #111827; font-weight: 700;">Your Assignments</h3>
 
 	<div class="assignments-list">
 		<div class="assignment-row" *ngFor="let a of assignments; let i = index" [class.alt]="i % 2 === 1">
 			<div class="left">
 				<a class="title">{{ a.title }}</a>
-				<div class="course">{{ a.course }}</div>
+				<div class="course">{{ a.description }}</div>
 			</div>
 			<div class="right">
 				<div class="stats">0 <span class="stat-label">Submitted</span></div>
@@ -37,57 +75,6 @@
 				<path d="M8 17a2 2 0 104 0H8z" />
 			</svg>
 		</div>
-		<div class="note">Auto-notification for due dates and submission confirmations will appear here.</div>
-	</div>
-</div>
-
-<div class="modal-overlay" *ngIf="uploadOpen">
-	<div class="modal" role="dialog" aria-modal="true">
-		<div class="modal-header">
-			<h3>Upload Assignment</h3>
-			<button class="close" (click)="closeUpload()" aria-label="Close dialog">
-				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="icon icon-close"
-					aria-hidden="true">
-					<path fill-rule="evenodd"
-						d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-						clip-rule="evenodd" />
-				</svg>
-			</button>
-		</div>
-
-		<div class="modal-body">
-			<label class="field">Title
-				<input #title type="text" placeholder="Assignment title" />
-			</label>
-
-			<label class="field">Course
-				<input #course type="text" placeholder="Course (e.g. CS 101)" />
-			</label>
-
-			<label class="field">Due Date
-				<input #due type="date" />
-			</label>
-
-			<div class="field">
-				<span class="label">Attachment (optional)</span>
-				<label class="file-label" for="assignmentFile">Choose file</label>
-				<input id="assignmentFile" type="file" hidden (change)="onFileSelected($event)" />
-
-			</div>
-
-			<div class="file-list" *ngIf="selectedFiles.length > 0">
-				<div class="file-item" *ngFor="let f of selectedFiles; let i = index">
-					<div class="file-name">{{ f.name }}</div>
-					<button class="remove" (click)="removeFile(i)">Remove</button>
-				</div>
-			</div>
-		</div>
-
-		<div class="modal-footer">
-			<button class="btn" (click)="closeUpload()">Cancel</button>
-			<button class="btn primary" (click)="submitAssignment(title.value, course.value, due.value)">
-				Upload Assignment
-			</button>
-		</div>
+		<div class="note">Assignments are saved locally in your browser.</div>
 	</div>
 </div>

@@ -1,9 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 
 export interface StoredAssignment {
   id: string;
   title: string;
-  course?: string;
+  description?: string;
   due: string;
   fileName?: string;
   fileDataUrl?: string | null;
@@ -16,9 +16,11 @@ export interface StoredAssignment {
   styleUrls: ['./assignments.component.css']
 })
 export class AssignmentsComponent {
-  uploadOpen = false;
-  selectedFiles: File[] = [];
+  @ViewChild('title') titleInput!: ElementRef;
+  @ViewChild('due') dueInput!: ElementRef;
+  @ViewChild('description') descriptionInput!: ElementRef;
 
+  selectedFiles: File[] = [];
   assignments: StoredAssignment[] = [];
 
   private storageKey = 'cms_assignments';
@@ -27,13 +29,11 @@ export class AssignmentsComponent {
     this.loadLocalAssignments();
   }
 
-  openUpload() {
-    this.uploadOpen = true;
-  }
-
-  closeUpload() {
-    this.uploadOpen = false;
+  clearForm() {
     this.selectedFiles = [];
+    if (this.titleInput) this.titleInput.nativeElement.value = '';
+    if (this.dueInput) this.dueInput.nativeElement.value = '';
+    if (this.descriptionInput) this.descriptionInput.nativeElement.value = '';
   }
 
   onFileSelected(event: Event) {
@@ -44,7 +44,6 @@ export class AssignmentsComponent {
       this.selectedFiles = [file];
     }
     input.value = '';
-    this.openUpload();
   }
 
   removeFile(index: number) {
@@ -61,7 +60,6 @@ export class AssignmentsComponent {
     const file = event.dataTransfer.files.item(0);
     if (file) {
       this.selectedFiles = [file];
-      this.openUpload();
     }
   }
 
@@ -87,9 +85,9 @@ export class AssignmentsComponent {
     }
   }
 
-  submitAssignment(title: string, course: string, due: string) {
-    if (!title || !course || !due) {
-      alert('Please provide title, course and due date');
+  submitAssignment(title: string, description: string, due: string) {
+    if (!title || !due) {
+      alert('Please provide title and due date');
       return;
     }
 
@@ -97,7 +95,7 @@ export class AssignmentsComponent {
     const base: StoredAssignment = {
       id,
       title,
-      course,
+      description,
       due,
       createdAt: Date.now(),
     };
@@ -106,8 +104,8 @@ export class AssignmentsComponent {
     if (!file) {
       this.assignments.unshift(base);
       this.saveAssignmentsToStorage();
-      alert('Assignment saved locally');
-      this.closeUpload();
+      alert('Assignment created successfully!');
+      this.clearForm();
       return;
     }
 
@@ -121,18 +119,16 @@ export class AssignmentsComponent {
       };
       this.assignments.unshift(item);
       this.saveAssignmentsToStorage();
-      alert('Assignment (with attachment) saved locally');
-      this.closeUpload();
+      alert('Assignment with file created successfully!');
+      this.clearForm();
     };
     reader.onerror = (err) => {
       console.error('Failed to read file', err);
-      // still save without file
       this.assignments.unshift(base);
       this.saveAssignmentsToStorage();
-      alert('Assignment saved locally (failed to read attachment)');
-      this.closeUpload();
+      alert('Assignment created (file attachment skipped)');
+      this.clearForm();
     };
-    // read as data URL (may be large); consider changing to not store file bytes in localStorage for large files
     reader.readAsDataURL(file);
   }
 
@@ -155,7 +151,6 @@ export class AssignmentsComponent {
   }
 
   viewSubmissions(a: StoredAssignment) {
-    // Placeholder for viewing submissions — implement as needed.
     alert(`View submissions for: ${a.title}`);
   }
 }
