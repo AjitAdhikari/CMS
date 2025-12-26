@@ -1,55 +1,43 @@
 <div class="fees-container">
-  <h1>Fees Management</h1>
-
-  <div class="summary">
-    <div class="summary-item">
-      <label>Pending Dues</label>
-      <div class="amount pending">${{ pendingDues.toFixed(2) }}</div>
-    </div>
-
-    <div class="summary-item">
-      <label>Last Payment</label>
-      <div class="amount" *ngIf="lastPayment">
-        ${{ lastPayment.amount.toFixed(2) }}
-        <small>({{ lastPayment.date }})</small>
-      </div>
-      <div class="amount" *ngIf="!lastPayment">No payments yet</div>
-    </div>
-
-    <div class="summary-item">
-      <label>Total Paid (Year)</label>
-      <div class="amount">${{ totalPaidYear.toFixed(2) }}</div>
-    </div>
+  <div class="invoice-header">
+    <h1>Manage Invoice</h1>
+    <a class="view-all" href="#" (click)="viewAllInvoices($event)">View all Invoice</a>
   </div>
 
-  <h2>Pending Fees</h2>
-  
-  <table>
+  <table class="invoice-table">
     <thead>
       <tr>
-        <th>Fee Type</th>
-        <th>Amount</th>
-        <th>Due Date</th>
-        <th>Status</th>
+        <th>S.No</th>
+        <th>Invoice Number</th>
+        <th>Fee Status</th>
+        <th>Total Amount</th>
+        <th>Amount Pay</th>
+        <th>Balanced Amount</th>
+        <th>Invoice Date</th>
+        <th>Action</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let fee of pendingFees">
-        <td>{{ fee.feeType }}</td>
-        <td>${{ fee.amount.toFixed(2) }}</td>
-        <td [class.urgent]="fee.dueDate === 'Immediate'">{{ fee.dueDate }}</td>
-        <td>
-          <span class="status" [ngClass]="fee.status.toLowerCase()">{{ fee.status }}</span>
-        </td>
+      <tr *ngFor="let invoice of pendingFees; let i = index">
+        <td>{{ i + 1 }}</td>
+        <td>{{ invoice.invoiceNumber }}</td>
+        <td>{{ invoice.feeStatus }}</td>
+        <td>{{ invoice.totalAmount | number:'1.0-0' }}</td>
+        <td>{{ invoice.amountPay | number:'1.0-0' }}</td>
+        <td>{{ invoice.balancedAmount | number:'1.0-0' }}</td>
+        <td>{{ invoice.invoiceDate }}</td>
+        <td><button class="btn-view" (click)="viewInvoice(invoice)">View</button></td>
       </tr>
       <tr *ngIf="pendingFees.length === 0">
-        <td colspan="4" style="text-align: center;">No pending fees</td>
+        <td colspan="8" class="no-data">No invoices found</td>
       </tr>
     </tbody>
   </table>
 
-  <div class="payment-section">
-    <button (click)="proceedToPayment()">Proceed to Online Payment</button>
-    <p>Integration payment system placeholder.</p>
+  <div class="pagination">
+    <a href="#" (click)="goTo('first', $event)">First</a>
+    <a href="#" (click)="goTo('prev', $event)">Prev</a>
+    <a href="#" (click)="goTo('next', $event)">Next</a>
+    <a href="#" (click)="goTo('last', $event)">Last</a>
   </div>
 </div>
