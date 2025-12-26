@@ -2,10 +2,8 @@
 	--header-bg: #f3f6fb;
 	--muted: #6b7280;
 	--accent: #0f172a;
-	--dimmer: rgba(15, 23, 42, 0.06);
 }
 
-/* Header navbar styles */
 nav.navbar {
 	position: relative;
 	height: 64px;
@@ -17,8 +15,6 @@ nav.navbar {
 .navbar-bg {
 	background: transparent;
 }
-
-/* header-dimmer removed */
 
 .avatar {
 	width: 42px;

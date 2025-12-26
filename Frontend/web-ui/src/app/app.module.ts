@@ -12,7 +12,9 @@ import { JwtInterceptor } from './JwtInterceptor';
 import { AdminSidebarComponent } from './modules/admin/components/admin-sidebar/admin-sidebar.component';
 import { HeaderModule } from './modules/admin/components/header/header.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { HeaderComponent as FacultyHeaderComponent } from './modules/faculty/components/header/header.component';
 import { LayoutModule } from './modules/layout/layout.module';
+import { HeaderComponent as StudentHeaderComponent } from './modules/student/components/header/header.component';
 import { StudentSidebarComponent } from './modules/student/components/student-sidebar/student-sidebar.component';
 
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
@@ -29,6 +31,8 @@ export function init_app(appLoadService: AppConfigInitService) {
     AppComponent,
     AdminSidebarComponent,
     StudentSidebarComponent,
+    FacultyHeaderComponent,
+    StudentHeaderComponent,
 
   ],
   imports: [

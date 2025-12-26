@@ -3,7 +3,9 @@
   <app-faculty-sidebar *ngIf="isLoggedIn() && isFacultyRoute()"></app-faculty-sidebar>
   <app-student-sidebar *ngIf="isLoggedIn() && isStudentRoute()"></app-student-sidebar>
   <div class="main">
-    <app-header *ngIf="!isLoginRoute()"></app-header>
+    <app-header *ngIf="!isLoginRoute() && isAdminRoute()"></app-header>
+    <app-faculty-header *ngIf="!isLoginRoute() && isFacultyRoute()"></app-faculty-header>
+    <app-student-header *ngIf="!isLoginRoute() && isStudentRoute()"></app-student-header>
     <main class="content">
       <router-outlet></router-outlet>
     </main>
