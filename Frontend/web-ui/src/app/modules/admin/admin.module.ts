@@ -12,6 +12,7 @@ import { FeeMonitoringComponent } from './pages/fee-monitoring/fee-monitoring.co
 import { NoticeControlComponent } from './pages/notice-control/notice-control.component';
 import { ScheduleComponent } from './pages/schedule/schedule.component';
 import { UserManagementComponent } from './pages/user-management/user-management.component';
+import { DepartmentComponent } from './pages/department/department.component';
 
 
 @NgModule({
@@ -22,6 +23,7 @@ import { UserManagementComponent } from './pages/user-management/user-management
     NoticeControlComponent,
     AddCoursesComponent,
     ScheduleComponent,
+    DepartmentComponent,
   ],
   imports: [
     CommonModule,
