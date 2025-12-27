@@ -117,40 +117,10 @@
 	cursor: pointer;
 }
 
-.notification {
-	display: flex;
-	align-items: center;
-	gap: 12px;
-	background: #FFFBEB;
-	border-radius: 8px;
-	padding: 16px 18px;
-	margin-top: 22px;
-	border: 1px solid rgba(250, 204, 21, 0.12);
-}
-
-.bell {
-	display: flex;
-	align-items: center
-}
-
-.bell svg {
-	width: 20px;
-	height: 20px;
-	color: #92400e
-}
-
-.note {
-	color: #6B4F00
-}
+/* notification, bell, and note styles removed (not used) */
 
 /* icon sizes inside modal */
-.modal .close .icon-close {
-	width: 18px;
-	height: 18px;
-	color: #374151
-}
 
-/* responsive small screens */
 @media (max-width:720px) {
 	.right {
 		flex-direction: column;
@@ -167,10 +137,8 @@
 	position: fixed;
 	inset: 0;
 	background: rgba(2, 6, 23, 0.5);
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	z-index: 60;
+	display: block;
+	z-index: 2147483646 !important;
 }
 
 .modal {
@@ -179,7 +147,16 @@
 	max-width: 92%;
 	border-radius: 10px;
 	padding: 18px;
-	box-shadow: 0 12px 40px rgba(2, 6, 23, 0.2);
+	box-shadow: 0 12px 40px rgba(2, 6, 23, 0.25);
+	z-index: 10001;
+	max-height: 92vh;
+	overflow: auto;
+	border: 1px solid rgba(0,0,0,0.06);
+	position: absolute !important;
+	top: 50% !important;
+	left: 50% !important;
+	transform: translate(-50%, -50%) !important;
+	display: block !important;
 }
 
 .modal-header {
@@ -223,29 +200,7 @@
 	margin-top: 6px
 }
 
-.file-list {
-	margin-top: 10px;
-	border-top: 1px dashed #E6E6E6;
-	padding-top: 10px
-}
-
-.file-item {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	padding: 6px 0
-}
-
-.file-name {
-	color: #111827
-}
-
-.remove {
-	background: transparent;
-	border: none;
-	color: #DC2626;
-	cursor: pointer
-}
+/* file-list and related helpers removed — inline markup uses simple elements */
 
 .modal-footer {
 	display: flex;

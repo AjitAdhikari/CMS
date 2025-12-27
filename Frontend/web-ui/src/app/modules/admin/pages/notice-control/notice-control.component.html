@@ -1,51 +1,33 @@
 <div class="notice-control-wrapper">
+    
     <div class="notice-header">
         <h2>Notice Center</h2>
 
-        <div class="toggle-buttons" role="tablist" aria-label="Notice views">
-            <button type="button" class="toggle-btn" [class.active]="currentView === 'admin'"
-                (click)="selectView('admin')" [attr.aria-pressed]="currentView === 'admin'">
-                Admin Notice
-            </button>
+        <div class="notice-actions">
+            <div class="toggle-buttons" role="tablist" aria-label="Notice views">
+                <button type="button" class="toggle-btn" [class.active]="currentView === 'admin'"
+                    (click)="selectView('admin')" [attr.aria-pressed]="currentView === 'admin'">
+                    Admin Notice
+                </button>
 
-            <button type="button" class="toggle-btn" [class.active]="currentView === 'university'"
-                (click)="selectView('university')" [attr.aria-pressed]="currentView === 'university'">
-                University Notice
-            </button>
+                <button type="button" class="toggle-btn" [class.active]="currentView === 'university'"
+                    (click)="selectView('university')" [attr.aria-pressed]="currentView === 'university'">
+                    University Notice
+                </button>
+            </div>
         </div>
     </div>
 
     <div class="notice-grid">
+
         
         <section class="notice-publish card notice-full-row" *ngIf="currentView === 'admin'">
-            <header class="card-header">
-                <h3>Admin Notice — Upload</h3>
+            <header class="card-header card-header-actions">
+                <h3> Upload Notice</h3>
+                <div>
+                    <button type="button" class="btn btn-primary" (click)="openCreate($event)">+ Create</button>
+                </div>
             </header>
-            <div class="card-body">
-                <form class="upload-form" (submit)="$event.preventDefault(); uploadAdminNotice()">
-                    <label class="field">
-                        <span class="label">Title</span>
-                        <input type="text" [(ngModel)]="adminNotice.title" name="title" placeholder="Notice title" />
-                    </label>
-
-                    <label class="field">
-                        <span class="label">Content</span>
-                        <textarea rows="5" [(ngModel)]="adminNotice.description" name="description"
-                            placeholder="Full notice content"></textarea>
-                    </label>
-
-                    <label class="field">
-                        <span class="label">Notice Date</span>
-                        <input type="date" [(ngModel)]="adminNotice.noticeDate" name="noticeDate" />
-                    </label>
-
-                    <div class="actions">
-                        <button type="submit" class="btn btn-primary" [disabled]="loading">Upload Notice</button>
-                    </div>
-                </form>
-
-                
-            </div>
         </section>
 
         <section class="existing-notices card notice-full-row" *ngIf="currentView === 'admin'">
@@ -54,13 +36,14 @@
             </header>
             <div class="card-body">
                 <div *ngIf="loading" class="muted">Loading notices…</div>
-                
+
                 <ng-container *ngIf="!loading">
                     <ul class="notice-list" *ngIf="notices && notices.length; else noNotices">
                         <li class="notice-card" *ngFor="let notice of notices">
                             <div class="notice-meta">
                                 <strong class="notice-title">{{ notice.title }}</strong>
-                                <span class="notice-date">{{ notice.notice_date | date:'short' }} • Created: {{ notice.created_at | date:'short' }}</span>
+                                <span class="notice-date">{{ notice.notice_date | date:'short' }} • Created: {{
+                                    notice.created_at | date:'short' }}</span>
                             </div>
                             <div class="notice-body">{{ notice.description }}</div>
                         </li>
@@ -71,7 +54,8 @@
                 </ng-container>
 
                 <div class="actions">
-                    <button type="button" class="btn btn-secondary" (click)="loadNotices()" [disabled]="loading">Refresh Notices</button>
+                    <button type="button" class="btn btn-secondary" (click)="loadNotices()" [disabled]="loading">Refresh
+                        Notices</button>
                 </div>
             </div>
         </section>
@@ -83,4 +67,37 @@
         </aside>
     </div>
 
+</div>
+
+<div class="modal-overlay" *ngIf="showForm">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>Create Admin Notice</h3>
+            <button class="close" (click)="showForm = false">✕</button>
+        </div>
+        <div class="modal-body">
+            <form (submit)="$event.preventDefault(); uploadAdminNotice()">
+                <label class="field">
+                    <span class="label">Title</span>
+                    <input type="text" [(ngModel)]="adminNotice.title" name="title" placeholder="Notice title" />
+                </label>
+
+                <label class="field">
+                    <span class="label">Content</span>
+                    <textarea rows="5" [(ngModel)]="adminNotice.description" name="description"
+                        placeholder="Full notice content"></textarea>
+                </label>
+
+                <label class="field">
+                    <span class="label">Notice Date</span>
+                    <input type="date" [(ngModel)]="adminNotice.noticeDate" name="noticeDate" />
+                </label>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn" (click)="showForm = false">Cancel</button>
+                    <button type="submit" class="btn btn-primary" [disabled]="loading">Upload Notice</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>

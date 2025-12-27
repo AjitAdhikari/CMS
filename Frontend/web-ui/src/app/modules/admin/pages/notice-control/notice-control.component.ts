@@ -15,6 +15,13 @@ export class NoticeControlComponent implements OnInit {
     noticeDate: ''
   };
 
+  showForm = false;
+
+  openCreate(event?: Event) {
+    if (event) event.preventDefault();
+    this.showForm = true;
+  }
+
   notices: Notice[] = [];
   loading = false;
 
@@ -45,7 +52,10 @@ export class NoticeControlComponent implements OnInit {
       next: () => {
         this.toastr.success('Notice created');
         this.adminNotice = { title: '', description: '', noticeDate: '' };
+        // close modal and refresh list
+        this.showForm = false;
         this.loadNotices(false);
+        this.loading = false;
       },
       error: (err) => {
         this.loading = false;

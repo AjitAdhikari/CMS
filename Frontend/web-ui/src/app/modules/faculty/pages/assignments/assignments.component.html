@@ -1,49 +1,10 @@
 <div class="assignments-card">
 	<div class="assignments-header">
-		<h2>Create New Assignment</h2>
+		<h2> Assignment</h2>
+		<div>
+			<button class="upload-btn" (click)="openCreate()">+ Create Assignment</button>
+		</div>
 	</div>
-
-	<form (ngSubmit)="submitAssignment(title.value, description.value, due.value)" #assignmentForm="ngForm" style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 28px;">
-		<div class="form-group">
-			<label for="title" style="display: block; margin-bottom: 6px; font-weight: 600; color: #374151; font-size: 14px;">Assignment Title *</label>
-			<input #title type="text" id="title" placeholder="Enter assignment title" required style="width: 100%; padding: 10px; border: 1px solid #E5E7EB; border-radius: 6px; font-size: 14px; font-family: inherit;" />
-		</div>
-
-		<div class="form-group">
-			<label for="due" style="display: block; margin-bottom: 6px; font-weight: 600; color: #374151; font-size: 14px;">Due Date *</label>
-			<input #due type="date" id="due" required style="width: 100%; padding: 10px; border: 1px solid #E5E7EB; border-radius: 6px; font-size: 14px; font-family: inherit;" />
-		</div>
-
-		<div class="form-group">
-			<label for="description" style="display: block; margin-bottom: 6px; font-weight: 600; color: #374151; font-size: 14px;">Description</label>
-			<textarea #description id="description" placeholder="Enter assignment description" style="width: 100%; padding: 10px; border: 1px solid #E5E7EB; border-radius: 6px; font-size: 14px; font-family: inherit; min-height: 120px; resize: vertical;"></textarea>
-		</div>
-
-		<div class="form-group">
-			<label style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151; font-size: 14px;">File Upload (optional)</label>
-			<label for="assignmentFile" style="display: inline-block; padding: 10px 16px; background: #EEF2FF; color: #4F46E5; border-radius: 8px; cursor: pointer; border: 1px solid rgba(79, 70, 229, 0.12); font-weight: 500;">
-				Choose File
-			</label>
-			<input id="assignmentFile" type="file" hidden (change)="onFileSelected($event)" />
-		</div>
-
-		<div *ngIf="selectedFiles.length > 0" style="border-top: 1px dashed #E6E6E6; padding-top: 12px; margin-top: 8px;">
-			<p style="font-size: 13px; color: #6B7280; margin: 0 0 8px 0;">Selected Files:</p>
-			<div *ngFor="let f of selectedFiles; let i = index" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0;">
-				<span style="color: #111827;">{{ f.name }}</span>
-				<button type="button" (click)="removeFile(i)" style="background: transparent; border: none; color: #DC2626; cursor: pointer; font-size: 13px;">Remove</button>
-			</div>
-		</div>
-
-		<div style="display: flex; gap: 12px; margin-top: 8px;">
-			<button type="submit" style="padding: 10px 20px; background: #4F46E5; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 14px;">
-				Create Assignment
-			</button>
-			<button type="button" (click)="clearForm()" style="padding: 10px 20px; background: #E5E7EB; color: #374151; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 14px;">
-				Clear
-			</button>
-		</div>
-	</form>
 
 	<div class="divider"></div>
 
@@ -58,11 +19,102 @@
 			<div class="right">
 				<div class="stats">0 <span class="stat-label">Submitted</span></div>
 				<div class="due">Due: <span>{{ a.due }}</span></div>
-				<button class="view-btn" (click)="viewSubmissions(a)">View Submissions</button>
-				<button class="view-btn" *ngIf="a.fileDataUrl" (click)="downloadAttachment(a)">Download</button>
+				<button class="view-btn" (click)="openSubmissions(a)">View Submissions</button>
+
 				<button class="view-btn" (click)="deleteAssignment(a.id)">Delete</button>
+				<button class="view-btn" (click)="openFeedback(a)">Feedback</button>
 			</div>
 		</div>
 		<div *ngIf="assignments.length === 0" class="muted">No assignments uploaded yet.</div>
+	</div>
+
+	<!-- Create Modal -->
+	<div class="modal-overlay" *ngIf="showForm">
+		<div class="modal">
+			<div class="modal-header">
+				<button class="close" (click)="clearForm(); showForm = false">✕</button>
+			</div>
+			<div class="modal-body">
+				<form (ngSubmit)="submitAssignment(title.value, description.value, due.value)">
+					<div class="field">
+						<label class="label">Title *</label>
+						<input #title type="text" required />
+					</div>
+					<div class="field">
+						<label class="label">Due Date *</label>
+						<input #due type="date" required />
+					</div>
+					<div class="field">
+						<label class="label">Description</label>
+						<textarea #description rows="6"></textarea>
+					</div>
+					<div class="field">
+						<label class="label">File (optional)</label>
+						<label class="file-label" for="assignmentFile">Choose File</label>
+						<input id="assignmentFile" type="file" (change)="onFileSelected($event)" hidden />
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn" (click)="clearForm(); showForm = false">Cancel</button>
+						<button type="submit" class="btn primary">Create Assignment</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<!-- Feedback Modal -->
+	<div class="modal-overlay" *ngIf="feedbackTarget">
+		<div class="modal">
+			<div class="modal-header">
+				<h3>Feedback for: {{ feedbackTarget.title }}</h3>
+				<button class="close" (click)="cancelFeedback()">✕</button>
+			</div>
+			<div class="modal-body">
+				<div class="field">
+					<label class="label">Feedback</label>
+					<textarea [(ngModel)]="feedbackText" rows="6"></textarea>
+				</div>
+				<div class="modal-footer">
+					<button class="btn" (click)="cancelFeedback()">Cancel</button>
+					<button class="btn primary" (click)="saveFeedback()">Save Feedback</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Submissions Modal -->
+	<div class="modal-overlay" *ngIf="submissionsTarget">
+		<div class="modal">
+			<div class="modal-header">
+				<h3>Submissions for: {{ submissionsTarget.title }}</h3>
+				<button class="close" (click)="closeSubmissions()">✕</button>
+			</div>
+			<div class="modal-body">
+				<div *ngIf="submissionsTarget.submissions && submissionsTarget.submissions.length > 0; else noSubs">
+					<div *ngFor="let s of submissionsTarget.submissions" style="border-bottom:1px solid #eee; padding:10px 0;">
+						<div style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
+							<div>
+								<strong>{{ s.studentName }}</strong>
+								<div class="muted">Submitted: {{ s.submittedAt | date:'short' }}</div>
+							</div>
+							<div style="display:flex; gap:8px; align-items:center;">
+								<button class="view-btn" *ngIf="s.fileDataUrl" (click)="downloadAttachment({fileDataUrl: s.fileDataUrl, fileName: s.fileName})">Download</button>
+							</div>
+						</div>
+						<div style="margin-top:8px;">
+							<label class="label">Feedback</label>
+							<textarea [(ngModel)]="s.feedback" rows="3" style="width:100%; padding:8px; border:1px solid #ddd; border-radius:6px;"></textarea>
+							<div style="display:flex; justify-content:flex-end; margin-top:8px; gap:8px;">
+								<button class="btn" (click)="s.feedback = ''; saveSubmissionFeedback(s)">Clear</button>
+								<button class="btn primary" (click)="saveSubmissionFeedback(s)">Save</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<ng-template #noSubs>
+					<p class="muted">No submissions for this assignment yet.</p>
+				</ng-template>
+			</div>
+		</div>
 	</div>
 </div>

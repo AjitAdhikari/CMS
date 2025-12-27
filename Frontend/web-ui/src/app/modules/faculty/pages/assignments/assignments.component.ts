@@ -7,7 +7,19 @@ export interface StoredAssignment {
   due: string;
   fileName?: string;
   fileDataUrl?: string | null;
+  feedback?: string;
+  submissions?: Submission[];
   createdAt: number;
+}
+
+export interface Submission {
+  id: string;
+  studentId: string;
+  studentName: string;
+  fileName?: string;
+  fileDataUrl?: string | null;
+  submittedAt: number;
+  feedback?: string;
 }
 
 @Component({
@@ -22,6 +34,10 @@ export class AssignmentsComponent {
 
   selectedFiles: File[] = [];
   assignments: StoredAssignment[] = [];
+  showForm = false;
+  feedbackTarget: StoredAssignment | null = null;
+  feedbackText = '';
+  submissionsTarget: StoredAssignment | null = null;
 
   private storageKey = 'cms_assignments';
 
@@ -104,8 +120,8 @@ export class AssignmentsComponent {
     if (!file) {
       this.assignments.unshift(base);
       this.saveAssignmentsToStorage();
-      alert('Assignment created successfully!');
       this.clearForm();
+      this.showForm = false;
       return;
     }
 
@@ -119,8 +135,8 @@ export class AssignmentsComponent {
       };
       this.assignments.unshift(item);
       this.saveAssignmentsToStorage();
-      alert('Assignment with file created successfully!');
       this.clearForm();
+      this.showForm = false;
     };
     reader.onerror = (err) => {
       console.error('Failed to read file', err);
@@ -132,14 +148,60 @@ export class AssignmentsComponent {
     reader.readAsDataURL(file);
   }
 
-  downloadAttachment(a: StoredAssignment) {
-    if (!a.fileDataUrl || !a.fileName) {
+  openCreate() {
+    console.log('openCreate called');
+    this.showForm = true;
+  }
+
+  openFeedback(a: StoredAssignment) {
+    this.feedbackTarget = a;
+    this.feedbackText = a.feedback || '';
+  }
+
+  openSubmissions(a: StoredAssignment) {
+    // ensure submissions array exists (in real app this would come from server)
+    if (!a.submissions) a.submissions = [];
+    this.submissionsTarget = a;
+  }
+
+  saveSubmissionFeedback(s: Submission) {
+    // find parent assignment and submission, then persist
+    if (!this.submissionsTarget) return;
+    const assgn = this.assignments.find(x => x.id === this.submissionsTarget!.id);
+    if (!assgn || !assgn.submissions) return;
+    const idx = assgn.submissions.findIndex(x => x.id === s.id);
+    if (idx > -1) {
+      assgn.submissions[idx].feedback = s.feedback || '';
+      this.saveAssignmentsToStorage();
+      alert('Feedback saved for ' + s.studentName);
+    }
+  }
+
+  closeSubmissions() {
+    this.submissionsTarget = null;
+  }
+
+  saveFeedback() {
+    if (!this.feedbackTarget) return;
+    this.feedbackTarget.feedback = this.feedbackText;
+    this.saveAssignmentsToStorage();
+    this.feedbackTarget = null;
+    this.feedbackText = '';
+  }
+
+  cancelFeedback() {
+    this.feedbackTarget = null;
+    this.feedbackText = '';
+  }
+
+  downloadAttachment(a: { fileDataUrl?: string | null; fileName?: string | undefined; }) {
+    if (!a || !a.fileDataUrl || !a.fileName) {
       alert('No attachment available');
       return;
     }
     const link = document.createElement('a');
     link.href = a.fileDataUrl;
-    link.download = a.fileName;
+    link.download = a.fileName as string;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
