@@ -1,83 +1,48 @@
 <div class="fm-root">
-	<header class="fm-header">
-		<h2>Fee Monitoring</h2>
-		<p class="lead">Track fee collection and generate downloadable reports per student.</p>
-	</header>
+  <header class="fm-header">
+	<h2>Students</h2>
+	<p class="lead">List of registered students and quick fee summary.</p>
+  </header>
 
-	<section class="fm-controls panel">
-		<div class="controls-row">
-			<div>
-				<label>Select student</label>
-				<select #sel (change)="selectStudent(sel.value ? +sel.value : undefined)">
-					<option value="">-- choose student --</option>
-					<option *ngFor="let s of studentsOnly" [value]="s.id">{{ s.name }}</option>
-				</select>
-			</div>
-			<div>
-				<label>Semester</label>
-				<select [(ngModel)]="selectedSemester">
-					<option *ngFor="let sem of semesters" [ngValue]="sem">Semester {{ sem }}</option>
-				</select>
-			</div>
-			<div class="actions">
-				<button class="btn primary" (click)="generateCsvReportForSelected()">Download Report</button>
-			</div>
+  <section class="panel">
+		<div class="search-controls">
+			<input type="text" placeholder="Search by name" [(ngModel)]="searchName" />
+			<select [(ngModel)]="searchSemester">
+				<option [ngValue]="null">All Semesters</option>
+				<option *ngFor="let sem of semesters" [ngValue]="sem">Semester {{ sem }}</option>
+			</select>
 		</div>
-	</section>
-
-	<section *ngIf="selectedStudent" class="fm-summary panel">
-		<h3>{{ selectedStudent.name }}</h3>
-		<div class="grid">
-			<div class="cards-row">
-				<div class="card pending">
-					<div class="label">Pending Dues</div>
-					<div class="value">{{ sumPendingFees() | currency:'USD':'symbol' }}</div>
-				</div>
-				<div class="card last">
-					<div class="label">Last Payment</div>
-					<ng-container *ngIf="lastPayment() as lp; else noLast">
-						<div class="value">{{ lp.amount | currency:'USD':'symbol' }} ({{ lp.date | date:'MMM yyyy' }})</div>
-					</ng-container>
-					<ng-template #noLast>
-						<div class="value">-</div>
-					</ng-template>
-				</div>
-				<div class="card total">
-					<div class="label">Total Paid (Year)</div>
-					<div class="value">{{ totalPaid() | currency:'USD':'symbol' }}</div>
-				</div>
-			</div>
-		</div>
-	</section>
-
-	<section *ngIf="selectedStudent" class="fm-payments panel">
-		<h4>Payments</h4>
-		<table class="fees-table">
-			<thead>
+	<table class="students-table">
+	  <thead>
 				<tr>
-					<th>FEE TYPE</th>
-					<th>AMOUNT</th>
-					<th>DUE DATE</th>
-					<th>STATUS</th>
+					<th>NAME</th>
+					<th>SEMESTER</th>
+					<th>FEE DUE</th>
+					<th>TOTAL PAID</th>
+					<th>BALANCE</th>
 				</tr>
-			</thead>
-			<tbody>
-				<tr *ngFor="let f of pendingFeesForSelectedSemester">
-					<td>{{ f.type }}</td>
-					<td>{{ f.amount | currency:'USD':'symbol' }}</td>
-					<td [class.overdue]="f.dueDate==='Immediate'">{{ f.dueDate }}</td>
-					<td><span class="pill" [class.overdue-pill]="f.status==='Overdue'">{{ f.status }}</span></td>
+	  </thead>
+	  <tbody>
+				<tr *ngFor="let s of paginatedStudents">
+					<td>{{ s.name }}</td>
+					<td>{{ s.semester || '-' }}</td>
+					<td>{{ s.feeDue | currency:'USD':'symbol' }}</td>
+					<td>{{ totalPaidForStudent(s.id) | currency:'USD':'symbol' }}</td>
+					<td>{{ balanceForStudent(s.id) | currency:'USD':'symbol' }}</td>
 				</tr>
-				<tr *ngIf="pendingFeesForSelectedSemester.length === 0">
-					<td colspan="4" class="muted">No pending fees for this semester</td>
+				<tr *ngIf="filteredStudents.length === 0">
+					<td colspan="5" class="muted">No students found</td>
 				</tr>
-			</tbody>
-		</table>
+	  </tbody>
+	</table>
 
-		<div class="cta-row">
-			<button class="btn primary large">Proceed to Online Payment</button>
-			<div class="caption muted">Integration payment system placeholder.</div>
+		<div class="pager" *ngIf="filteredStudents.length > pageSize">
+			<button class="pager-btn" (click)="prevPage()" [disabled]="page===1">Prev</button>
+			<ng-container *ngFor="let n of [].constructor(totalPages); let i = index">
+				<button class="pager-page" [class.active]="page===i+1" (click)="goToPage(i+1)">{{ i+1 }}</button>
+			</ng-container>
+			<button class="pager-btn" (click)="nextPage()" [disabled]="page===totalPages">Next</button>
+			<div class="pager-info">Page {{ page }} of {{ totalPages }} — Showing {{ paginatedStudents.length }} of {{ filteredStudents.length }}</div>
 		</div>
-
-	</section>
+  </section>
 </div>
