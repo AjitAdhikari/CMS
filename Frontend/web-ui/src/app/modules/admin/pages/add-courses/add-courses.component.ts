@@ -9,10 +9,11 @@ import { Course, CourseService } from '../../../../services/course.service';
 })
 export class AddCoursesComponent {
   model = { title: '', code: '', department: '', description: '', syllabus: null as File | null };
-  successMessage = '';
+
   courses: Course[] = [];
   editingId: number | null = null;
-  syllabusFileName = '';
+
+  showForm = false;
 
   constructor(private courseService: CourseService) {
     this.courses = this.courseService.getCourses();
@@ -20,7 +21,7 @@ export class AddCoursesComponent {
 
   submit(form: NgForm) {
     if (!form.valid) return;
-    
+
     if (this.editingId !== null) {
       this.courseService.updateCourse(this.editingId, {
         title: this.model.title,
@@ -29,7 +30,6 @@ export class AddCoursesComponent {
         description: this.model.description,
         syllabus: this.model.syllabus
       });
-      this.successMessage = `Course "${this.model.title}" updated.`;
       this.editingId = null;
     } else {
       const added = this.courseService.addCourse({
@@ -39,58 +39,53 @@ export class AddCoursesComponent {
         description: this.model.description,
         syllabus: this.model.syllabus
       });
-      this.successMessage = `Course "${added.title}" added.`;
     }
-    
+
     this.model = { title: '', code: '', department: '', description: '', syllabus: null };
-    this.syllabusFileName = '';
     this.courses = this.courseService.getCourses();
     form.resetForm();
-    setTimeout(() => this.successMessage = '', 3500);
+    this.showForm = false;
+
   }
 
   edit(course: Course) {
-    this.model = { 
-      title: course.title, 
-      code: course.code, 
+    this.model = {
+      title: course.title,
+      code: course.code,
       department: course.department || '',
       description: course.description || '',
       syllabus: null
     };
-    this.syllabusFileName = '';
     this.editingId = course.id;
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    this.showForm = true;
   }
 
   delete(id: number) {
     if (confirm('Are you sure you want to delete this course?')) {
       this.courseService.deleteCourse(id);
       this.courses = this.courseService.getCourses();
-      this.successMessage = 'Course deleted successfully.';
-      setTimeout(() => this.successMessage = '', 3500);
+      // deletion acknowledged by list refresh
     }
   }
 
   cancel() {
     this.editingId = null;
     this.model = { title: '', code: '', department: '', description: '', syllabus: null };
-    this.syllabusFileName = '';
+    this.showForm = false;
   }
 
   onSyllabusSelected(event: Event) {
     const input = event.target as HTMLInputElement;
     const files = input.files;
-    
+
     if (files && files.length > 0) {
       const file = files[0];
       const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-      
+
       if (validTypes.includes(file.type)) {
         this.model.syllabus = file;
-        this.syllabusFileName = file.name;
       } else {
-        this.successMessage = 'Please upload a valid file (PDF, DOC, DOCX)';
-        setTimeout(() => this.successMessage = '', 3500);
+        alert('Please upload a valid file (PDF, DOC, DOCX)');
         input.value = '';
       }
     }
