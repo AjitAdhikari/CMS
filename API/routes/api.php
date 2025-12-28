@@ -71,3 +71,13 @@ Route::prefix('notices')->group(function () {
 
        // Departments
     Route::apiResource('departments', DepartmentController::class);
+
+    Route::post(
+        'faculty/attendance',
+        [FacultyAttendanceController::class, 'store']
+    );
+
+     Route::get(
+        'faculty/attendance',
+        [FacultyAttendanceController::class, 'index']
+    );
