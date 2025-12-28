@@ -39,7 +39,26 @@ export class LoginComponent implements OnInit {
   ngAfterViewInit(): void {
     const t = StorageHelper.getToken();
     if (t) {
-      this.router.navigate(['/admin/dashboard']);
+      const userJson = StorageHelper.getLocalStorageItem('_user_details');
+      if (userJson) {
+        try {
+          const user = JSON.parse(userJson);
+          const role = (user && user.role) ? String(user.role).toLowerCase() : '';
+          if (role === 'admin') {
+            this.router.navigate(['/admin/dashboard']);
+          } else if (role === 'faculty') {
+            this.router.navigate(['/faculty/dashboard']);
+          } else if (role === 'student') {
+            this.router.navigate(['/student/dashboard']);
+          } else {
+            StorageHelper.removeToken();
+          }
+        } catch (e) {
+          StorageHelper.removeToken();
+        }
+      } else {
+        StorageHelper.removeToken();
+      }
     }
   }
 

@@ -36,14 +36,17 @@ export class AuthService {
 
       let userDetails = response.body.user;
       console.log(userDetails);
-      if(userDetails.role == 'admin')
-      {
+      const role = (userDetails && userDetails.role) ? String(userDetails.role).toLowerCase() : '';
+      if (role === 'admin') {
         this._router.navigate(['/admin/dashboard']);
-      } else if (userDetails.role == 'faculty')
-      {
+      } else if (role === 'faculty') {
         this._router.navigate(['/faculty/dashboard']);
-      } else {
+      } else if (role === 'student') {
         this._router.navigate(['/student/dashboard']);
+      } else {
+        this._toastr.info('Unknown user role, please login again', 'Info');
+        StorageHelper.removeToken();
+        this._router.navigate(['/login']);
       }
     }
     );
