@@ -4,6 +4,14 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\FeeController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\NoticeController;
+use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\CourseController;
+use App\Http\Controllers\AssignmentController;
+use App\Http\Controllers\ClassScheduleController;
+use App\Http\Controllers\ExamResultController;
+use App\Http\Controllers\ExamController;
+use App\Http\Controllers\FacultyAttendanceController;
+
 
 
 Route::get('/test', function() {
