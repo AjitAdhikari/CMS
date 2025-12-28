@@ -8,7 +8,7 @@ import { Course, CourseService } from '../../../../services/course.service';
   styleUrls: ['./add-courses.component.css']
 })
 export class AddCoursesComponent {
-  model = { title: '', code: '', department: '', description: '', syllabus: null as File | null };
+  model = { title: '', code: '', department: '', semester: 1, description: '', syllabus: null as File | null };
 
   courses: Course[] = [];
   editingId: number | null = null;
@@ -21,12 +21,17 @@ export class AddCoursesComponent {
 
   submit(form: NgForm) {
     if (!form.valid) return;
+    if (!this.model.syllabus) {
+      alert('Please attach a syllabus file.');
+      return;
+    }
 
     if (this.editingId !== null) {
       this.courseService.updateCourse(this.editingId, {
         title: this.model.title,
         code: this.model.code,
         department: this.model.department,
+        semester: this.model.semester,
         description: this.model.description,
         syllabus: this.model.syllabus
       });
@@ -36,12 +41,13 @@ export class AddCoursesComponent {
         title: this.model.title,
         code: this.model.code,
         department: this.model.department,
+        semester: this.model.semester,
         description: this.model.description,
         syllabus: this.model.syllabus
       });
     }
 
-    this.model = { title: '', code: '', department: '', description: '', syllabus: null };
+    this.model = { title: '', code: '', department: '', semester: 1, description: '', syllabus: null };
     this.courses = this.courseService.getCourses();
     form.resetForm();
     this.showForm = false;
@@ -53,6 +59,7 @@ export class AddCoursesComponent {
       title: course.title,
       code: course.code,
       department: course.department || '',
+      semester: (course as any).semester || 1,
       description: course.description || '',
       syllabus: null
     };
@@ -64,13 +71,12 @@ export class AddCoursesComponent {
     if (confirm('Are you sure you want to delete this course?')) {
       this.courseService.deleteCourse(id);
       this.courses = this.courseService.getCourses();
-      // deletion acknowledged by list refresh
     }
   }
 
   cancel() {
     this.editingId = null;
-    this.model = { title: '', code: '', department: '', description: '', syllabus: null };
+    this.model = { title: '', code: '', department: '', semester: 1, description: '', syllabus: null };
     this.showForm = false;
   }
 

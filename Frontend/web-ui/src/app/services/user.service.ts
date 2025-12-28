@@ -15,6 +15,8 @@ export interface ApiUser {
   role?: string;
   subjects?: string | null;
   semesters?: string | number | null;
+  department?: string | null;
+  fees?: number | string | null;
 }
 
 // Frontend model used by the component
@@ -28,6 +30,8 @@ export interface User {
   semester?: number;
   subjects?: string;
   activity?: string;
+  department?: string;
+  fees?: number;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -63,7 +67,9 @@ export class UserService {
       roles: role ? [role] : [],
       status: api.active_status === 0 ? 'Inactive' : 'Active',
       semester: api.semesters ? Number(api.semesters) : undefined,
-      subjects: api.subjects || undefined
+      subjects: api.subjects || undefined,
+      department: api.department || undefined
+      ,fees: api.fees !== undefined && api.fees !== null ? Number(api.fees) : undefined
     };
   }
 
@@ -85,7 +91,9 @@ export class UserService {
       active_status: user.status === 'Inactive' ? 0 : 1,
       role: user.roles && user.roles.length ? user.roles[0] : user.roles,
       semesters: user.semester !== undefined ? String(user.semester) : null,
-      subjects: user.subjects || null
+      subjects: user.subjects || null,
+      department: user.department || null,
+      fees: user.fees !== undefined && user.fees !== null ? Number(user.fees) : null
     };
   }
 }

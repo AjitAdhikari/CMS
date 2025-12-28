@@ -9,10 +9,10 @@ import { User, UserService } from '../../../../services/user.service';
 })
 export class UserManagementComponent implements OnInit {
   users: User[] = [];
-  roles: string[] = ['Admin', 'Student', 'Faculty'];
+  
   courses: Course[] = [];
+  departments: string[] = [];
 
-  // UI state
   showForm = false;
   editing = false;
   currentAddRole: 'Admin' | 'Student' | 'Faculty' = 'Admin';
@@ -22,10 +22,13 @@ export class UserManagementComponent implements OnInit {
   loading = false;
   errorMessage = '';
 
-  constructor(private courseService: CourseService, private userService: UserService) {}
+  constructor(private courseService: CourseService, private userService: UserService) { }
 
   ngOnInit(): void {
     this.courses = this.courseService.getCourses();
+    const deptSet = new Set<string>();
+    this.courses.forEach(c => { if (c.department) deptSet.add(c.department); });
+    this.departments = Array.from(deptSet);
     this.loadUsers();
   }
 
@@ -89,9 +92,7 @@ export class UserManagementComponent implements OnInit {
     return this.users.filter(u => u.roles.includes(role)).length;
   }
 
-  openAdd(): void {
-    this.openAddForRole(this.roleFilter as 'Admin' | 'Student' | 'Faculty');
-  }
+  
 
   openEdit(user: User): void {
     this.editing = true;
@@ -107,16 +108,39 @@ export class UserManagementComponent implements OnInit {
 
   saveUser(): void {
     const t = this.tempUser as User;
+
     if (!t.name || !t.email) {
       alert('Please provide name and email.');
       return;
     }
+    if (!this.isValidEmail(t.email)) {
+      alert('Please enter a valid email address.');
+      return;
+    }
 
-    // Backend requires password on create (especially for Faculty/Student)
     if (!this.editing && !t.password) {
       alert('Please provide a password.');
       return;
     }
+
+    const role = this.editing ? (t.roles && t.roles.length ? t.roles[0] : this.currentAddRole) : (this.currentAddRole || this.roleFilter);
+    if (role === 'Student') {
+      if ((t as any).semester === undefined || (t as any).semester === null) {
+        alert('Please select a semester for the student.');
+        return;
+      }
+    }
+    if (role === 'Faculty') {
+      if (!t.subjects) {
+        alert('Please select a subject for the faculty.');
+        return;
+      }
+      if (!t.department) {
+        alert('Please select a department for the faculty.');
+        return;
+      }
+    }
+
     this.loading = true;
 
     if (this.editing && t.id !== undefined) {
@@ -124,6 +148,8 @@ export class UserManagementComponent implements OnInit {
         ...t,
         roles: this.tempUser.roles || [this.currentAddRole]
       };
+
+      if (t.department) payload.department = t.department;
 
       this.userService.update(t.id, payload).subscribe({
         next: () => {
@@ -138,12 +164,12 @@ export class UserManagementComponent implements OnInit {
         }
       });
     } else {
-      const role = this.currentAddRole || (this.roleFilter as 'Admin' | 'Student' | 'Faculty');
       const payload: Partial<User> & { roles: string[] } = {
         ...t,
         roles: [role],
         status: t.status || 'Active',
-        semester: role === 'Student' ? ((t as any).semester || 1) : undefined
+        semester: role === 'Student' ? ((t as any).semester || 1) : undefined,
+        department: t.department || undefined
       };
 
       this.userService.create(payload).subscribe({
@@ -159,6 +185,12 @@ export class UserManagementComponent implements OnInit {
         }
       });
     }
+  }
+
+  private isValidEmail(email: string | undefined): boolean {
+    if (!email) return false;
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
   }
 
   deleteUser(id?: number | string): void {

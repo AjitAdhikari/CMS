@@ -5,6 +5,7 @@ export interface Course {
   title: string;
   code: string;
   department?: string;
+  semester?: number;
   description?: string;
   syllabus?: File | null;
 }
@@ -62,6 +63,7 @@ export class CourseService {
           title: c.title || '',
           code: c.code || '',
           department: c.department || '',
+          semester: c.semester !== undefined ? Number(c.semester) : undefined,
           description: c.description || ''
         }));
         const maxId = this.courses.reduce((max, c) => Math.max(max, c.id), 0);

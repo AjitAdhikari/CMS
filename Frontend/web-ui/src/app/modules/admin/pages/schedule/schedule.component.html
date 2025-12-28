@@ -49,10 +49,9 @@
                 <thead>
                     <tr>
                         <th>Course</th>
-                        <th>Department</th>
                         <th>Faculty</th>
-                        <th>Day</th>
-                        <th>Time</th>
+                        <th>Class Date</th>
+                        <th>Time & Status</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -61,14 +60,18 @@
                         <td>
                             <div class="course-cell">
                                 <span class="course-name-text">{{ schedule.courseName }}</span>
-                                <span class="course-id">ID: {{ schedule.courseId }}</span>
+                                <span class="course-id">ID: {{ schedule.course_id }}</span>
                             </div>
                         </td>
-                        <td>{{ schedule.department }}</td>
                         <td>{{ schedule.facultyName }}</td>
-                        <td>{{ schedule.dayOfWeek }}</td>
+                        <td>{{ schedule.class_date }}</td>
                         <td>
-                            <span class="time-text">{{ schedule.startTime || '--:--' }} - {{ schedule.endTime || '--:--' }}</span>
+                            <span class="time-text">{{ schedule.start_time || '--:--' }} - {{ schedule.end_time ||
+                                '--:--' }}</span>
+                            <span class="status-badge" style="margin-left:0.75rem; vertical-align:middle;"
+                                [ngClass]="{'active': schedule.status === 'active', 'inactive': schedule.status !== 'active'}">
+                                {{ schedule.status | titlecase }}
+                            </span>
                         </td>
                         <td>
                             <div class="action-buttons">
@@ -117,71 +120,50 @@
         <form [formGroup]="scheduleForm" class="modal-form">
             <div class="form-group">
                 <label for="courseId">Course *</label>
-                <select id="courseId" formControlName="courseId" class="form-control">
+                <select id="courseId" formControlName="course_id" class="form-control">
                     <option value="">Select a course</option>
                     <option *ngFor="let course of courses" [value]="course.id">{{ course.name }}</option>
                 </select>
             </div>
 
             <div class="form-group">
-                <label for="department">Department *</label>
-                <select id="department" formControlName="department" class="form-control">
-                    <option value="">Select a department</option>
-                    <option *ngFor="let dept of departments" [value]="dept.value">{{ dept.label }}</option>
-                </select>
-            </div>
-
-            <div class="form-group">
                 <label for="facultyId">Faculty *</label>
-                <select id="facultyId" formControlName="facultyId" class="form-control">
+                <select id="facultyId" formControlName="faculty_id" class="form-control">
                     <option value="">Select a faculty</option>
                     <option *ngFor="let faculty of faculties" [value]="faculty.id">{{ faculty.name }}</option>
                 </select>
             </div>
 
             <div class="form-group">
-                <label for="dayOfWeek">Day of Week *</label>
-                <select id="dayOfWeek" formControlName="dayOfWeek" class="form-control">
-                    <option value="">Select a day</option>
-                    <option *ngFor="let day of daysOfWeek" [value]="day">{{ day }}</option>
-                </select>
+                <label for="classDate">Class Date *</label>
+                <input type="date" id="classDate" formControlName="class_date" class="form-control" />
             </div>
 
             <div class="form-row">
                 <div class="form-group">
                     <label for="startTime">Start Time *</label>
-                    <input type="time" id="startTime" formControlName="startTime" class="form-control" />
+                    <input type="time" id="startTime" formControlName="start_time" class="form-control" />
+                    <div style="display:flex;align-items:center;gap:0.5rem;margin-top:0.5rem;">
+                        <input type="checkbox" id="isActiveAdd" formControlName="isActive" />
+                        <label for="isActiveAdd" style="margin:0">Active Schedule</label>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="endTime">End Time *</label>
-                    <input type="time" id="endTime" formControlName="endTime" class="form-control" />
+                    <input type="time" id="endTime" formControlName="end_time" class="form-control" />
                 </div>
-            </div>
-
-            <div class="form-group">
-                <label for="scheduleType">Schedule Type *</label>
-                <select id="scheduleType" formControlName="scheduleType" class="form-control">
-                    <option *ngFor="let type of scheduleTypes" [value]="type.value">{{ type.label }}</option>
-                </select>
-            </div>
-
-            <div class="form-group checkbox">
-                <label for="isActiveAdd">
-                    <input type="checkbox" id="isActiveAdd" formControlName="isActive" />
-                    <span>Active Schedule</span>
-                </label>
             </div>
         </form>
 
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" (click)="closeAddModal()">Cancel</button>
-            <button type="button" class="btn btn-primary" (click)="createSchedule()" [disabled]="scheduleForm.invalid">Create
+            <button type="button" class="btn btn-primary" (click)="createSchedule()"
+                [disabled]="scheduleForm.invalid">Create
                 Schedule</button>
         </div>
     </div>
 </div>
 
-<!-- Edit Schedule Modal -->
 <div *ngIf="showEditModal && selectedSchedule" class="modal-overlay" (click)="closeEditModal()">
     <div class="modal-content modal-lg" (click)="$event.stopPropagation()">
         <div class="modal-header">
@@ -200,7 +182,7 @@
         <form [formGroup]="editForm" class="modal-form">
             <div class="form-group">
                 <label for="courseIdEdit">Course ID</label>
-                <input type="number" id="courseIdEdit" formControlName="courseId" class="form-control" readonly />
+                <input type="number" id="courseIdEdit" formControlName="course_id" class="form-control" readonly />
             </div>
 
             <div class="form-group">
@@ -209,51 +191,31 @@
             </div>
 
             <div class="form-group">
-                <label for="departmentEdit">Department *</label>
-                <select id="departmentEdit" formControlName="department" class="form-control">
-                    <option value="">Select a department</option>
-                    <option *ngFor="let dept of departments" [value]="dept.value">{{ dept.label }}</option>
-                </select>
-            </div>
-
-            <div class="form-group">
                 <label for="facultyIdEdit">Faculty *</label>
-                <select id="facultyIdEdit" formControlName="facultyId" class="form-control">
+                <select id="facultyIdEdit" formControlName="faculty_id" class="form-control">
                     <option value="">Select a faculty</option>
                     <option *ngFor="let faculty of faculties" [value]="faculty.id">{{ faculty.name }}</option>
                 </select>
             </div>
 
             <div class="form-group">
-                <label for="dayOfWeekEdit">Day of Week *</label>
-                <select id="dayOfWeekEdit" formControlName="dayOfWeek" class="form-control">
-                    <option *ngFor="let day of daysOfWeek" [value]="day">{{ day }}</option>
-                </select>
+                <label for="classDateEdit">Class Date *</label>
+                <input type="date" id="classDateEdit" formControlName="class_date" class="form-control" />
             </div>
 
             <div class="form-row">
                 <div class="form-group">
                     <label for="startTimeEdit">Start Time *</label>
-                    <input type="time" id="startTimeEdit" formControlName="startTime" class="form-control" />
+                    <input type="time" id="startTimeEdit" formControlName="start_time" class="form-control" />
+                    <div style="display:flex;align-items:center;gap:0.5rem;margin-top:0.5rem;">
+                        <input type="checkbox" id="isActiveEdit" formControlName="isActive" />
+                        <label for="isActiveEdit" style="margin:0">Active Schedule</label>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="endTimeEdit">End Time *</label>
-                    <input type="time" id="endTimeEdit" formControlName="endTime" class="form-control" />
+                    <input type="time" id="endTimeEdit" formControlName="end_time" class="form-control" />
                 </div>
-            </div>
-
-            <div class="form-group">
-                <label for="scheduleTypeEdit">Schedule Type *</label>
-                <select id="scheduleTypeEdit" formControlName="scheduleType" class="form-control">
-                    <option *ngFor="let type of scheduleTypes" [value]="type.value">{{ type.label }}</option>
-                </select>
-            </div>
-
-            <div class="form-group checkbox">
-                <label for="isActiveEdit">
-                    <input type="checkbox" id="isActiveEdit" formControlName="isActive" />
-                    <span>Active Schedule</span>
-                </label>
             </div>
         </form>
 

@@ -133,12 +133,17 @@
 .um-modal-card {
 	position: relative;
 	background: #fff;
-	padding: 18px;
+	padding: 22px;
 	border-radius: 10px;
-	min-width: 360px;
-	max-width: 560px;
+	min-width: 420px;
+	max-width: 760px;
+	width: min(760px, 90%);
+	/* increase height so form feels a bit longer while still constrained */
+	max-height: calc(100vh - 80px);
+	overflow: auto;
+	-webkit-overflow-scrolling: touch;
 	z-index: 61;
-	box-shadow: 0 12px 40px rgba(2, 6, 23, 0.2)
+	box-shadow: 0 12px 40px rgba(2, 6, 23, 0.2);
 }
 
 .um-modal-card h3 {

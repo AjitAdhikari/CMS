@@ -44,12 +44,12 @@
 }
 
 .btn-primary {
-  background-color: #4f46e5;
+  background-color: #635ce9;
   color: white;
 }
 
 .btn-primary:hover:not(:disabled) {
-  background-color: #4338ca;
+  background-color: #3120e8;
   transform: translateY(-2px);
 }
 
@@ -252,88 +252,6 @@
   gap: 0.5rem;
 }
 
-.schedules-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 1.5rem;
-}
-
-.schedule-card {
-  background: white;
-  border-radius: 0.75rem;
-  border: 1px solid #e5e7eb;
-  overflow: hidden;
-  transition: all 0.3s ease;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.schedule-card:hover {
-  border-color: #4f46e5;
-  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15);
-}
-
-.card-header {
-  padding: 1.5rem;
-  border-bottom: 1px solid #f3f4f6;
-  display: flex;
-  justify-content: space-between;
-  align-items: start;
-}
-
-.course-info {
-  flex: 1;
-}
-
-.course-name {
-  margin: 0;
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: #1f2937;
-}
-
-.faculty-name {
-  margin: 0.25rem 0 0;
-  color: #6b7280;
-  font-size: 0.875rem;
-  font-weight: 500;
-}
-
-.schedule-badges {
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
-  flex-wrap: wrap;
-}
-
-.type-badge {
-  display: inline-block;
-  padding: 0.25rem 0.75rem;
-  border-radius: 9999px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.type-regular {
-  background-color: #dbeafe;
-  color: #1e40af;
-}
-
-.type-lab {
-  background-color: #fef3c7;
-  color: #78350f;
-}
-
-.type-tutorial {
-  background-color: #c7d2fe;
-  color: #3730a3;
-}
-
-.type-one-time {
-  background-color: #fecdd3;
-  color: #831843;
-}
 
 .status-badge {
   display: inline-block;

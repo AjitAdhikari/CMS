@@ -12,6 +12,7 @@
 				<th>Course ID</th>
 				<th>Course Title</th>
 				<th>Department</th>
+				<th>Semester</th>
 				<th>Description</th>
 				<th>Activity</th>
 			</tr>
@@ -21,6 +22,7 @@
 				<td>{{c.id}}</td>
 				<td>{{c.title}}</td>
 				<td>{{c.department}}</td>
+				<td>{{c.semester || '-'}}</td>
 				<td>{{c.description}}</td>
 				<td>
 					<button class="btn btn-sm btn-info" type="button" (click)="edit(c)">Edit</button>
@@ -40,25 +42,45 @@
 			<form #f="ngForm" (ngSubmit)="submit(f)">
 				<div class="form-body">
 					<label>Title</label>
-					<input name="title" required [(ngModel)]="model.title" class="form-control" />
+					<input name="title" #title="ngModel" required [(ngModel)]="model.title" class="form-control" />
+					<div *ngIf="title.invalid && (title.dirty || title.touched || f.submitted)" class="error">Title is
+						required.</div>
 
 					<label>Code</label>
-					<input name="code" required [(ngModel)]="model.code" class="form-control" />
+					<input name="code" #code="ngModel" required [(ngModel)]="model.code" class="form-control" />
+					<div *ngIf="code.invalid && (code.dirty || code.touched || f.submitted)" class="error">Code is
+						required.</div>
 
 					<label>Department</label>
-					<select name="department" required [(ngModel)]="model.department" class="form-control">
+					<select name="department" #department="ngModel" required [(ngModel)]="model.department"
+						class="form-control">
 						<option value="">Select a Department</option>
 						<option value="BBA">BBA</option>
 						<option value="BCA">BCA</option>
 						<option value="BBA-TT">BBA-TT</option>
 					</select>
+					<div *ngIf="department.invalid && (department.dirty || department.touched || f.submitted)"
+						class="error">Please select a department.</div>
+
+					<label>Semester</label>
+					<select name="semester" #semester="ngModel" required [(ngModel)]="model.semester"
+						class="form-control">
+						<option *ngFor="let n of [1,2,3,4,5,6,7,8]" [ngValue]="n">Semester {{ n }}</option>
+					</select>
+					<div *ngIf="semester.invalid && (semester.dirty || semester.touched || f.submitted)" class="error">
+						Please select a semester.</div>
 
 					<label>Description</label>
-					<textarea name="description" [(ngModel)]="model.description" class="form-control"></textarea>
+					<textarea name="description" #description="ngModel" required [(ngModel)]="model.description"
+						class="form-control"></textarea>
+					<div *ngIf="description.invalid && (description.dirty || description.touched || f.submitted)"
+						class="error">Description is required.</div>
 
 					<label>Syllabus</label>
-					<input type="file" name="syllabus" (change)="onSyllabusSelected($event)" class="form-control"
-						accept=".pdf,.doc,.docx" />
+					<input type="file" name="syllabus" required (change)="onSyllabusSelected($event)"
+						class="form-control" accept=".pdf,.doc,.docx" />
+					<div *ngIf="f.submitted && !model.syllabus" class="error">Please attach a syllabus file (PDF, DOC,
+						DOCX).</div>
 					<small class="text-muted">Accepted formats: PDF, DOC, DOCX</small>
 				</div>
 
