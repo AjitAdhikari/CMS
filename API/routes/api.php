@@ -67,3 +67,7 @@ Route::prefix('notices')->group(function () {
     Route::apiResource('exams', ExamController::class)->only(['index','store']);
     Route::post('exam-results', [ExamResultController::class, 'store']);
     Route::get('exam-results/{studentId}', [ExamResultController::class, 'show']);
+
+
+       // Departments
+    Route::apiResource('departments', DepartmentController::class);
