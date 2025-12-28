@@ -12,6 +12,9 @@ export class FeesComponent implements OnInit {
   totalPaidYear: number = 0;
   pendingFees: any[] = [];
   isLoading: boolean = false;
+  // Pagination
+  pageSize: number = 10;
+  currentPage: number = 1;
 
   constructor(private feeService: FeeService) { }
 
@@ -50,6 +53,19 @@ export class FeesComponent implements OnInit {
     this.totalPaidYear = 3500.00;
   }
 
+  get totalPages(): number {
+    return Math.max(1, Math.ceil(this.pendingFees.length / this.pageSize));
+  }
+
+  get displayedFees(): any[] {
+    const start = (this.currentPage - 1) * this.pageSize;
+    return this.pendingFees.slice(start, start + this.pageSize);
+  }
+
+  createRange(n: number): any[] {
+    return new Array(n);
+  }
+
   viewInvoice(invoice: any): void {
     // Replace with real navigation to invoice detail
     console.log('View invoice', invoice);
@@ -64,11 +80,41 @@ export class FeesComponent implements OnInit {
 
   goTo(action: 'first' | 'prev' | 'next' | 'last', event: Event): void {
     event.preventDefault();
-    console.log('Pagination action:', action);
-    // placeholder for pagination logic
+    if (action === 'first') this.currentPage = 1;
+    else if (action === 'prev') this.currentPage = Math.max(1, this.currentPage - 1);
+    else if (action === 'next') this.currentPage = Math.min(this.totalPages, this.currentPage + 1);
+    else if (action === 'last') this.currentPage = this.totalPages;
+  }
+
+  changePage(page: number, event?: Event): void {
+    if (event) event.preventDefault();
+    if (page < 1 || page > this.totalPages) return;
+    this.currentPage = page;
   }
 
   proceedToPayment(): void {
-    alert('Payment system integration placeholder. This will redirect to payment gateway.');
+    if (!this.pendingFees || this.pendingFees.length === 0) {
+      alert('No invoices to process.');
+      return;
+    }
+    const count = this.displayedFees.length;
+    const ok = confirm(`Process payment for ${count} invoice(s) shown on this page?`);
+    if (!ok) return;
+
+    // UI-only: mark displayed invoices as paid
+    const start = (this.currentPage - 1) * this.pageSize;
+    for (let i = 0; i < this.displayedFees.length; i++) {
+      const idx = start + i;
+      const inv = this.pendingFees[idx];
+      if (inv) {
+        inv.feeStatus = 'Paid';
+        inv.amountPay = inv.totalAmount;
+        inv.balancedAmount = 0;
+      }
+    }
+    // Recalculate dues
+    this.pendingDues = this.pendingFees.reduce((s, inv) => s + (inv.balancedAmount || 0), 0);
+    alert(`Processed payment for ${count} invoice(s) (UI-only).`);
   }
+  
 }
