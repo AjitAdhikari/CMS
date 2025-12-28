@@ -1,65 +1,37 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use App\Models\ClassSchedule;
 use Illuminate\Http\Request;
 
 class ClassScheduleController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        return ClassSchedule::with(['course','faculty'])->get();
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        return ClassSchedule::create($request->all());
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(ClassSchedule $classSchedule)
     {
-        //
+        return $classSchedule->load(['course','faculty']);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(ClassSchedule $classSchedule)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, ClassSchedule $classSchedule)
     {
-        //
+        $classSchedule->update($request->all());
+        return $classSchedule;
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(ClassSchedule $classSchedule)
     {
-        //
+        $classSchedule->delete();
+        return response()->json(['message' => 'Schedule removed']);
     }
 }
