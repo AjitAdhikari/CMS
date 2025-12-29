@@ -14,8 +14,8 @@
           <!-- Profile Photo Section -->
           <div class="profile-photo-section">
             <div class="profile-photo-container">
-              <img [src]="avatarPreview || userProfile.avatar || '/assets/images/user-avatar.png'" 
-                   alt="Profile Photo" 
+              <img [src]="getAvatarSrc()"
+                   alt="Profile Photo"
                    class="profile-photo">
             </div>
             <div class="photo-upload">

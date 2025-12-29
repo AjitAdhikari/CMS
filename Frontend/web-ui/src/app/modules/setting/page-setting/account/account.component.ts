@@ -40,7 +40,10 @@ export class AccountComponent implements OnInit {
     this.loading = true;
     this.settingService.getUserProfile(userId).subscribe({
       next: (profile: UserProfileView) => {
+        // normalize role and populate avatar preview for display
+        profile.role = this.normalizeRole(profile.role);
         this.userProfile = profile;
+        this.avatarPreview = profile.avatar || null;
         this.loading = false;
       },
       error: (err) => {
@@ -48,6 +51,15 @@ export class AccountComponent implements OnInit {
         this.toastr.error(err || 'Failed to load profile');
       }
     });
+  }
+
+  private normalizeRole(role: any): string {
+    if (role == null) return '';
+    const s = String(role).toLowerCase();
+    if (s === '1' || s === 'student') return 'student';
+    if (s === '2' || s === 'faculty') return 'faculty';
+    if (s === '3' || s === 'admin' || s === 'administrator') return 'admin';
+    return s;
   }
 
   onAvatarSelected(event: Event) {
@@ -71,13 +83,15 @@ export class AccountComponent implements OnInit {
     }
 
     this.loading = true;
-    const payload = {
+    const payload: any = {
       id: this.currentUserId,
       name: this.userProfile?.name || '',
       email: this.userProfile?.email || '',
       role: this.userProfile?.role,
       subjects: this.userProfile?.subjects,
-      semesters: this.userProfile?.semesters
+      semesters: this.userProfile?.semesters,
+      // backend validation requires active_status
+      active_status: (this.userProfile as any)?.active_status ?? 1
     };
 
     this.settingService.updateUserProfile(payload, this.selectedAvatarFile).subscribe({
@@ -93,9 +107,22 @@ export class AccountComponent implements OnInit {
       },
       error: (err) => {
         this.loading = false;
+        console.error('Upload avatar error:', err);
         this.toastr.error(err || 'Failed to upload photo');
       }
     });
+  }
+
+  getAvatarSrc(): string {
+    if (this.avatarPreview) return this.avatarPreview;
+    const avatar = this.userProfile?.avatar;
+    if (!avatar) return '/assets/images/user-avatar.png';
+    // already a full URL or data URI
+    if (/^(https?:)?\/\//.test(avatar) || avatar.startsWith('data:')) return avatar;
+    // already an absolute path
+    if (avatar.startsWith('/')) return avatar;
+    // assume stored path under /storage/
+    return window.location.origin + '/storage/' + avatar;
   }
 
   isStudent(): boolean {

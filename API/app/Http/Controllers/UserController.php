@@ -76,6 +76,14 @@ class UserController extends Controller
             $user_profile = new UserProfile();
             $user_profile->user_id = $last_inserted_id;
             $user_profile->role = $validated['role'];
+
+            // handle optional avatar upload
+            if ($request->hasFile('avatar')) {
+                $file = $request->file('avatar');
+                $path = $file->store('avatars', 'public');
+                $user_profile->avatar = $path;
+            }
+
             $user_profile->save();
 
            return response()->json([
@@ -123,6 +131,13 @@ class UserController extends Controller
             $user_profile->subjects = $validated['subjects'] ?? $user_profile->subjects;
             $user_profile->semesters = $validated['semesters'] ?? $user_profile->semesters;
             $user_profile->updated_at = now();
+            // handle optional avatar upload and save path
+            if ($request->hasFile('avatar')) {
+                $file = $request->file('avatar');
+                $path = $file->store('avatars', 'public');
+                $user_profile->avatar = $path;
+            }
+
             $user_profile->save();
 
            return response()->json([
@@ -172,6 +187,11 @@ class UserController extends Controller
 
             if (!$user) {
                 return response()->json(['error' => 'User not found'], 404);
+            }
+
+            if ($user && !empty($user->avatar)) {
+                // convert stored path into a publicly accessible URL
+                $user->avatar = url('storage/' . $user->avatar);
             }
 
             return response()->json($user);

@@ -23,5 +23,6 @@ export interface UpdateUserProfilePayload {
   role?: string;
   subjects?: string;
   semesters?: string;
+  active_status?: number;
   // avatar will be sent as File via FormData
 }

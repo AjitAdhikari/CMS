@@ -10,7 +10,7 @@ import { UpdatePassword, UpdateUserProfilePayload, UserProfileView } from './set
 export class SettingService {
 
 
-  private baseUrl = `${environment.ApiUrl}/user`; // replace with your API base URL
+  private baseUrl = `${environment.ApiUrl}/users`;
 
   constructor(private http: HttpClient) { }
 
@@ -24,7 +24,7 @@ export class SettingService {
 
   // Get full user profile by id (joins users + user_profiles)
   getUserProfile(userId: string): Observable<UserProfileView> {
-    const url = `${environment.ApiUrl}/users/${userId}`;
+    const url = `${this.baseUrl}/${userId}`;
     return this.http.get<UserProfileView>(url).pipe(
       catchError(this.handleError)
     );
@@ -36,12 +36,13 @@ export class SettingService {
     formData.append('id', payload.id);
     formData.append('name', payload.name);
     formData.append('email', payload.email);
+    if ((payload as any).active_status !== undefined) formData.append('active_status', String((payload as any).active_status));
     if (payload.role) formData.append('role', payload.role);
     if (payload.subjects) formData.append('subjects', payload.subjects);
     if (payload.semesters) formData.append('semesters', payload.semesters);
     if (avatarFile) formData.append('avatar', avatarFile);
 
-    const url = `${environment.ApiUrl}/users/${payload.id}`;
+    const url = `${this.baseUrl}/${payload.id}`;
     // Backend expects POST for update at /users/{id}
     return this.http.post(url, formData).pipe(
       catchError(this.handleError)
