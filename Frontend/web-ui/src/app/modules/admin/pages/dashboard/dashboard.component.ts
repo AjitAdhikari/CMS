@@ -24,7 +24,14 @@ export class DashboardComponent implements OnInit {
   }
 
   loadCourses() {
-    this.recentCourses = this.courseService.getCourses().slice(0, 5);
+    this.courseService.getCourses().subscribe({
+      next: (courses) => {
+        this.recentCourses = courses.slice(0, 5);
+      },
+      error: (error) => {
+        console.error('Error loading courses:', error);
+      }
+    });
   }
 
   loadAnnouncements() {

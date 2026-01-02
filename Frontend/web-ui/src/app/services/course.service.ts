@@ -1,86 +1,70 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
+import { UserService } from './user.service';
 
 export interface Course {
   id: number;
-  title: string;
-  code: string;
-  department?: string;
-  semester?: number;
-  description?: string;
-  syllabus?: File | null;
+  course_name: string;
+  course_code: string;
+  credit: number;
+  department: string;
+  semester: number;
+  created_by?: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class CourseService {
-  private courses: Course[] = [];
-  private nextId = 1;
-  private readonly storageKey = 'app_courses';
+  private apiUrl = `${environment.ApiUrl}/courses`;
 
-  constructor() {
-    this.loadFromStorage();
-  }
+  constructor(
+    private http: HttpClient,
+    private userService: UserService
+  ) {}
 
-  addCourse(data: Omit<Course, 'id'>) {
-    const course: Course = { id: this.nextId++, ...data } as Course;
-    this.courses.unshift(course);
-    this.persist();
-    return course;
-  }
-
-  updateCourse(id: number, data: Omit<Course, 'id'>) {
-    const index = this.courses.findIndex(c => c.id === id);
-    if (index !== -1) {
-      this.courses[index] = { id, ...data } as Course;
-      this.persist();
+  addCourse(data: any): Observable<Course> {
+    const currentUser = this.userService.current;
+    const payload: any = {
+      course_name: data.title,
+      course_code: data.code,
+      credit: data.credit,
+      department: data.department,
+      semester: data.semester
+    };
+    
+    // Only include created_by if user is logged in
+    if (currentUser?.id) {
+      payload.created_by = currentUser.id;
     }
+    
+    return this.http.post<Course>(this.apiUrl, payload);
   }
 
-  deleteCourse(id: number) {
-    const index = this.courses.findIndex(c => c.id === id);
-    if (index !== -1) {
-      this.courses.splice(index, 1);
-      this.persist();
-    }
+  updateCourse(id: number, data: any): Observable<Course> {
+    const payload = {
+      course_name: data.title,
+      course_code: data.code,
+      credit: data.credit,
+      department: data.department,
+      semester: data.semester
+    };
+    return this.http.put<Course>(`${this.apiUrl}/${id}`, payload);
   }
 
-  getCourses(): Course[] {
-    return this.courses.slice();
+  deleteCourse(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`);
   }
 
-  private loadFromStorage(): void {
-    try {
-      const stored = localStorage.getItem(this.storageKey);
-      if (!stored) {
-        return;
-      }
-
-      const parsed = JSON.parse(stored);
-      if (Array.isArray(parsed)) {
-        this.courses = parsed.map((c, idx) => ({
-          id: typeof c.id === 'number' ? c.id : idx + 1,
-          title: c.title || '',
-          code: c.code || '',
-          department: c.department || '',
-          semester: c.semester !== undefined ? Number(c.semester) : undefined,
-          description: c.description || ''
-        }));
-        const maxId = this.courses.reduce((max, c) => Math.max(max, c.id), 0);
-        this.nextId = maxId + 1;
-      }
-    } catch (error) {
-      console.error('Failed to load courses from storage', error);
-      this.courses = [];
-      this.nextId = 1;
-    }
+  getCourses(): Observable<Course[]> {
+    return this.http.get<Course[]>(this.apiUrl);
   }
 
-  private persist(): void {
-    try {
-      localStorage.setItem(this.storageKey, JSON.stringify(this.courses));
-    } catch (error) {
-      console.error('Failed to persist courses to storage', error);
-    }
+  getCourse(id: number): Observable<Course> {
+    return this.http.get<Course>(`${this.apiUrl}/${id}`);
   }
 }

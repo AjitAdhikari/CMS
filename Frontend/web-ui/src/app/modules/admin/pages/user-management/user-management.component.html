@@ -142,7 +142,7 @@
 					<label>Course/Subject</label>
 					<select required [(ngModel)]="tempUser.subjects">
 						<option [ngValue]="undefined">Select a course</option>
-						<option *ngFor="let course of courses" [ngValue]="course.title">{{ course.title }}</option>
+						<option *ngFor="let course of courses" [ngValue]="course.course_name">{{ course.course_name }}</option>
 					</select>
 				</div>
 				<div class="form-row">

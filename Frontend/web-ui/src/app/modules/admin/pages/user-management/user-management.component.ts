@@ -25,10 +25,17 @@ export class UserManagementComponent implements OnInit {
   constructor(private courseService: CourseService, private userService: UserService) { }
 
   ngOnInit(): void {
-    this.courses = this.courseService.getCourses();
-    const deptSet = new Set<string>();
-    this.courses.forEach(c => { if (c.department) deptSet.add(c.department); });
-    this.departments = Array.from(deptSet);
+    this.courseService.getCourses().subscribe({
+      next: (courses) => {
+        this.courses = courses;
+        const deptSet = new Set<string>();
+        this.courses.forEach(c => { if (c.department) deptSet.add(c.department); });
+        this.departments = Array.from(deptSet);
+      },
+      error: (error) => {
+        console.error('Error loading courses:', error);
+      }
+    });
     this.loadUsers();
   }
 
@@ -36,11 +43,11 @@ export class UserManagementComponent implements OnInit {
     this.loading = true;
     this.errorMessage = '';
     this.userService.list().subscribe({
-      next: (users) => {
+      next: (users: User[]) => {
         this.users = users;
         this.loading = false;
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Failed to load users', err);
         this.errorMessage = 'Failed to load users.';
         this.loading = false;
@@ -59,8 +66,8 @@ export class UserManagementComponent implements OnInit {
 
   getSubjectsDisplay(subjects?: string): string {
     if (!subjects) return '-';
-    const course = this.courses.find(c => c.title === subjects);
-    return course ? course.title : subjects;
+    const course = this.courses.find(c => c.course_name === subjects);
+    return course ? course.course_name : subjects;
   }
 
   get modalTitle(): string {
@@ -152,16 +159,16 @@ export class UserManagementComponent implements OnInit {
       if (t.department) payload.department = t.department;
 
       this.userService.update(t.id, payload).subscribe({
-        next: () => {
+          next: () => {
           this.loading = false;
           this.closeForm();
           this.loadUsers();
         },
-        error: (err) => {
-          console.error('Failed to update user', err);
-          alert('Failed to update user.');
-          this.loading = false;
-        }
+          error: (err: any) => {
+            console.error('Failed to update user', err);
+            alert('Failed to update user.');
+            this.loading = false;
+          }
       });
     } else {
       const payload: Partial<User> & { roles: string[] } = {
@@ -173,16 +180,16 @@ export class UserManagementComponent implements OnInit {
       };
 
       this.userService.create(payload).subscribe({
-        next: () => {
+          next: () => {
           this.loading = false;
           this.closeForm();
           this.loadUsers();
         },
-        error: (err) => {
-          console.error('Failed to create user', err);
-          alert('Failed to create user.');
-          this.loading = false;
-        }
+          error: (err: any) => {
+            console.error('Failed to create user', err);
+            alert('Failed to create user.');
+            this.loading = false;
+          }
       });
     }
   }
@@ -202,7 +209,7 @@ export class UserManagementComponent implements OnInit {
         this.loading = false;
         this.loadUsers();
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Failed to delete user', err);
         alert('Failed to delete user.');
         this.loading = false;

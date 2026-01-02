@@ -1,67 +1,110 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Course, CourseService } from '../../../../services/course.service';
+import { DepartmentPayload, DepartmentService } from '../../../../services/department.service';
 
 @Component({
   selector: 'app-add-courses',
   templateUrl: './add-courses.component.html',
   styleUrls: ['./add-courses.component.css']
 })
-export class AddCoursesComponent {
-  model = { title: '', code: '', department: '', semester: 1, description: '', syllabus: null as File | null };
+export class AddCoursesComponent implements OnInit {
+  model = { title: '', code: '', credit: 0, department: '', semester: 1 };
 
   courses: Course[] = [];
+  departments: DepartmentPayload[] = [];
   editingId: number | null = null;
 
   showForm = false;
 
-  constructor(private courseService: CourseService) {
-    this.courses = this.courseService.getCourses();
+  constructor(
+    private courseService: CourseService,
+    private departmentService: DepartmentService
+  ) {}
+
+  ngOnInit() {
+    this.loadCourses();
+    this.loadDepartments();
+  }
+
+  loadCourses() {
+    this.courseService.getCourses().subscribe({
+      next: (data) => {
+        this.courses = data;
+      },
+      error: (err) => {
+        console.error('Failed to load courses', err);
+      }
+    });
+  }
+
+  loadDepartments() {
+    this.departmentService.list().subscribe({
+      next: (data) => {
+        this.departments = data;
+      },
+      error: (err) => {
+        console.error('Failed to load departments', err);
+      }
+    });
   }
 
   submit(form: NgForm) {
     if (!form.valid) return;
-    if (!this.model.syllabus) {
-      alert('Please attach a syllabus file.');
-      return;
-    }
 
     if (this.editingId !== null) {
       this.courseService.updateCourse(this.editingId, {
         title: this.model.title,
         code: this.model.code,
+        credit: this.model.credit,
         department: this.model.department,
-        semester: this.model.semester,
-        description: this.model.description,
-        syllabus: this.model.syllabus
+        semester: this.model.semester
+      }).subscribe({
+        next: () => {
+          this.editingId = null;
+          this.resetForm(form);
+          this.loadCourses();
+        },
+        error: (err) => {
+          console.error('Failed to update course', err);
+          const errorMsg = err?.error?.message || err?.error?.error || 'Failed to update course. Please try again.';
+          alert(errorMsg);
+        }
       });
-      this.editingId = null;
     } else {
-      const added = this.courseService.addCourse({
+      this.courseService.addCourse({
         title: this.model.title,
         code: this.model.code,
+        credit: this.model.credit,
         department: this.model.department,
-        semester: this.model.semester,
-        description: this.model.description,
-        syllabus: this.model.syllabus
+        semester: this.model.semester
+      }).subscribe({
+        next: () => {
+          this.resetForm(form);
+          this.loadCourses();
+        },
+        error: (err) => {
+          console.error('Failed to add course', err);
+          const errorMsg = err?.error?.message || err?.error?.error || 'Failed to add course. Please try again.';
+          alert(errorMsg);
+        }
       });
     }
+  }
 
-    this.model = { title: '', code: '', department: '', semester: 1, description: '', syllabus: null };
-    this.courses = this.courseService.getCourses();
+  resetForm(form: NgForm) {
+    this.model = { title: '', code: '', credit: 0, department: '', semester: 1 };
     form.resetForm();
     this.showForm = false;
-
   }
 
   edit(course: Course) {
     this.model = {
-      title: course.title,
-      code: course.code,
+      title: course.course_name,
+      code: course.course_code,
+      credit: course.credit || 0,
       department: course.department || '',
-      semester: (course as any).semester || 1,
-      description: course.description || '',
-      syllabus: null
+      semester: course.semester || 1
     };
     this.editingId = course.id;
     this.showForm = true;
@@ -69,31 +112,21 @@ export class AddCoursesComponent {
 
   delete(id: number) {
     if (confirm('Are you sure you want to delete this course?')) {
-      this.courseService.deleteCourse(id);
-      this.courses = this.courseService.getCourses();
+      this.courseService.deleteCourse(id).subscribe({
+        next: () => {
+          this.loadCourses();
+        },
+        error: (err) => {
+          console.error('Failed to delete course', err);
+          alert('Failed to delete course. Please try again.');
+        }
+      });
     }
   }
 
   cancel() {
     this.editingId = null;
-    this.model = { title: '', code: '', department: '', semester: 1, description: '', syllabus: null };
+    this.model = { title: '', code: '', credit: 0, department: '', semester: 1 };
     this.showForm = false;
-  }
-
-  onSyllabusSelected(event: Event) {
-    const input = event.target as HTMLInputElement;
-    const files = input.files;
-
-    if (files && files.length > 0) {
-      const file = files[0];
-      const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-
-      if (validTypes.includes(file.type)) {
-        this.model.syllabus = file;
-      } else {
-        alert('Please upload a valid file (PDF, DOC, DOCX)');
-        input.value = '';
-      }
-    }
   }
 }
