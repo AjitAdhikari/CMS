@@ -8,6 +8,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AppConfigInitService } from './appconfig.init';
+import { ClockinPopupComponent } from './components/clockin-popup/clockin-popup.component';
 import { JwtInterceptor } from './JwtInterceptor';
 import { AdminSidebarComponent } from './modules/admin/components/admin-sidebar/admin-sidebar.component';
 import { HeaderModule } from './modules/admin/components/header/header.module';
@@ -33,6 +34,7 @@ export function init_app(appLoadService: AppConfigInitService) {
     StudentSidebarComponent,
     FacultyHeaderComponent,
     StudentHeaderComponent,
+    ClockinPopupComponent,
 
   ],
   imports: [
