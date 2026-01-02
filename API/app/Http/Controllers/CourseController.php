@@ -10,29 +10,62 @@ class CourseController extends Controller
 {
     public function index()
     {
-        return Course::with(['faculties', 'students'])->get();
+        try
+        {
+            return Course::all();
+        } catch(\Exception $ex)
+        {
+            return response()->json(['error' => $ex->getMessage()], 400);
+        } 
     }
 
     public function store(Request $request)
     {
-        $course = Course::create($request->all());
-        return response()->json($course, 201);
+        try
+        {
+            $course = Course::create($request->all());
+            return response()->json($course, 201);
+        } catch(\Exception $ex)
+        {
+            return response()->json(['error' => $ex->getMessage()], 400);
+        } 
     }
 
     public function show(Course $course)
     {
-        return $course->load(['faculties', 'students']);
+        try
+        {
+            $entity = $course->findOrFail($course->id)->get();
+            return response()->json($entity, 200);
+        } catch(\Exception $ex)
+        {
+            return response()->json(['error' => $ex->getMessage()], 400);
+        } 
     }
 
     public function update(Request $request, Course $course)
     {
-        $course->update($request->all());
-        return response()->json($course);
+        try
+        {
+            $course->update($request->all());
+            return response()->json($course);
+        } catch(\Exception $ex)
+        {
+            return response()->json(['error' => $ex->getMessage()], 400);
+        } 
+      
     }
 
     public function destroy(Course $course)
     {
-        $course->delete();
-        return response()->json(['message' => 'Course deleted']);
+        try
+        {
+            $course->delete();
+            return response()->json(['message' => 'Course deleted']);
+        }catch(\Exception $ex)
+        {
+             return response()->json(['error' => $ex->getMessage()], 400);
+        }
+       
     }
 }

@@ -1,6 +1,9 @@
 <?php
 
 namespace App\Models;
+use App\Models\User;
+use App\Models\Assignment;
+use App\Models\Exam;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -17,12 +20,12 @@ class Course extends Model
 
     public function faculties()
     {
-        return $this->belongsToMany(Faculty::class, 'course_faculty');
+        return $this->belongsToMany(User::class, 'course_faculty');
     }
 
     public function students()
     {
-        return $this->belongsToMany(Student::class, 'course_students');
+        return $this->belongsToMany(User::class, 'course_students');
     }
 
     public function assignments()
