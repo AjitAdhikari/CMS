@@ -59,17 +59,17 @@
                     <tr *ngFor="let schedule of schedules">
                         <td>
                             <div class="course-cell">
-                                <span class="course-name-text">{{ schedule.courseName }}</span>
+                                <span class="course-name-text">{{ schedule.course?.course_name || 'N/A' }}</span>
                                 <span class="course-id">ID: {{ schedule.course_id }}</span>
                             </div>
                         </td>
-                        <td>{{ schedule.facultyName }}</td>
+                        <td>{{ schedule.faculty?.name || 'N/A' }}</td>
                         <td>{{ schedule.class_date }}</td>
                         <td>
                             <span class="time-text">{{ schedule.start_time || '--:--' }} - {{ schedule.end_time ||
                                 '--:--' }}</span>
                             <span class="status-badge" style="margin-left:0.75rem; vertical-align:middle;"
-                                [ngClass]="{'active': schedule.status === 'active', 'inactive': schedule.status !== 'active'}">
+                                [ngClass]="{'scheduled': schedule.status === 'scheduled', 'cancelled': schedule.status === 'cancelled', 'rescheduled': schedule.status === 'rescheduled'}">
                                 {{ schedule.status | titlecase }}
                             </span>
                         </td>
@@ -122,7 +122,7 @@
                 <label for="courseId">Course *</label>
                 <select id="courseId" formControlName="course_id" class="form-control">
                     <option value="">Select a course</option>
-                    <option *ngFor="let course of courses" [value]="course.id">{{ course.name }}</option>
+                    <option *ngFor="let course of courses" [value]="course.id">{{ course.course_name }}</option>
                 </select>
             </div>
 
@@ -143,10 +143,6 @@
                 <div class="form-group">
                     <label for="startTime">Start Time *</label>
                     <input type="time" id="startTime" formControlName="start_time" class="form-control" />
-                    <div style="display:flex;align-items:center;gap:0.5rem;margin-top:0.5rem;">
-                        <input type="checkbox" id="isActiveAdd" formControlName="isActive" />
-                        <label for="isActiveAdd" style="margin:0">Active Schedule</label>
-                    </div>
                 </div>
                 <div class="form-group">
                     <label for="endTime">End Time *</label>
@@ -207,10 +203,6 @@
                 <div class="form-group">
                     <label for="startTimeEdit">Start Time *</label>
                     <input type="time" id="startTimeEdit" formControlName="start_time" class="form-control" />
-                    <div style="display:flex;align-items:center;gap:0.5rem;margin-top:0.5rem;">
-                        <input type="checkbox" id="isActiveEdit" formControlName="isActive" />
-                        <label for="isActiveEdit" style="margin:0">Active Schedule</label>
-                    </div>
                 </div>
                 <div class="form-group">
                     <label for="endTimeEdit">End Time *</label>
@@ -221,7 +213,7 @@
 
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" (click)="closeEditModal()">Cancel</button>
-            <button type="button" class="btn btn-primary" (click)="updateSchedule()">Update Schedule</button>
+            <button type="button" class="btn btn-primary" (click)="updateSchedule()" [disabled]="editForm.invalid">Update Schedule</button>
         </div>
     </div>
 </div>

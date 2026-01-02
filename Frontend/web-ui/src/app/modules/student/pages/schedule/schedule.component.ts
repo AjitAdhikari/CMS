@@ -1,48 +1,54 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { ClassSchedule, ClassScheduleService } from '../../../../services/class-schedule.service';
+import { UserService } from '../../../../services/user.service';
 
-interface ScheduleItem {
-  course: string;
-  semester: number;
-  day: string;
-  startTime: string;
-  endTime: string;
-  remarks: string;
-}
 @Component({
   selector: 'app-schedule',
   templateUrl: './schedule.component.html',
   styleUrls: ['./schedule.component.css']
 })
-export class ScheduleComponent {
+export class ScheduleComponent implements OnInit {
+  schedules: ClassSchedule[] = [];
+  isLoading = false;
+  errorMessage = '';
 
-  schedules: ScheduleItem[] = [
-    {
-      course: 'Database Systems',
-      semester: 4,
-      day: 'Friday',
-      startTime: '10:00',
-      endTime: '11:30',
-      remarks: 'Bring laptop for lab prep'
-    },
-    {
-      course: 'Algorithms',
-      semester: 4,
-      day: 'Tuesday',
-      startTime: '09:30',
-      endTime: '11:00',
-      remarks: 'Room 310'
-    },
-    {
-      course: 'Computer Networks',
-      semester: 5,
-      day: 'Thursday',
-      startTime: '11:30',
-      endTime: '13:00',
-      remarks: 'Lab C - switch configs'
-    },
-  ];
+  constructor(
+    private scheduleService: ClassScheduleService,
+    private userService: UserService
+  ) {}
 
-  get filteredSchedules(): ScheduleItem[] {
+  ngOnInit(): void {
+    this.loadSchedules();
+  }
+
+  loadSchedules(): void {
+    this.isLoading = true;
+    this.errorMessage = '';
+    
+    const currentUser = this.userService.current;
+    const currentSemester = currentUser?.semesters;
+    
+    this.scheduleService.getSchedules().subscribe({
+      next: (data: ClassSchedule[]) => {
+        // Filter schedules to show only those for student's semester
+        if (currentSemester) {
+          this.schedules = data.filter(schedule => 
+            schedule.course?.semester == currentSemester
+          );
+        } else {
+          this.schedules = data;
+        }
+        this.isLoading = false;
+      },
+      error: (err: any) => {
+        console.error('Error loading schedules:', err);
+        this.errorMessage = 'Failed to load schedules';
+        this.isLoading = false;
+      }
+    });
+  }
+
+  get filteredSchedules(): ClassSchedule[] {
     return this.schedules;
   }
 }

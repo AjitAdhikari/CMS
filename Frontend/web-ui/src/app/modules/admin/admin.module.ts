@@ -13,6 +13,7 @@ import { NoticeControlComponent } from './pages/notice-control/notice-control.co
 import { ScheduleComponent } from './pages/schedule/schedule.component';
 import { UserManagementComponent } from './pages/user-management/user-management.component';
 import { DepartmentComponent } from './pages/department/department.component';
+import { AttendanceComponent } from './pages/attendance/attendance.component';
 
 
 @NgModule({
@@ -24,6 +25,7 @@ import { DepartmentComponent } from './pages/department/department.component';
     AddCoursesComponent,
     ScheduleComponent,
     DepartmentComponent,
+    AttendanceComponent,
   ],
   imports: [
     CommonModule,
@@ -34,6 +36,6 @@ import { DepartmentComponent } from './pages/department/department.component';
     FormsModule,
     ReactiveFormsModule
   ]
-  
+
 })
 export class AdminModule { }

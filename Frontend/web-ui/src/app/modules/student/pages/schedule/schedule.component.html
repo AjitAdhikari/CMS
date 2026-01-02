@@ -4,27 +4,37 @@
             <h2 class="page-title">Schedule</h2>
         </div>
 
-        <div class="table-wrapper">
+        <div *ngIf="errorMessage" class="alert alert-danger">
+            {{ errorMessage }}
+        </div>
+
+        <div *ngIf="isLoading" class="loading-state">
+            <p>Loading schedules...</p>
+        </div>
+
+        <div *ngIf="!isLoading" class="table-wrapper">
             <table class="schedule-table">
                 <thead>
                     <tr>
                         <th>Course</th>
-                        <th>Day</th>
+                        <th>Faculty</th>
+                        <th>Date</th>
                         <th>Time</th>
-                        <th>Remarks</th>
+                        <th>Status</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr *ngFor="let item of filteredSchedules">
                         <td>
-                            <div class="course-name">{{ item.course }}</div>
+                            <div class="course-name">{{ item.course?.course_name }}</div>
                         </td>
-                        <td>{{ item.day }}</td>
-                        <td>{{ item.startTime }} - {{ item.endTime }}</td>
-                        <td class="muted">{{ item.remarks }}</td>
+                        <td>{{ item.faculty?.name }}</td>
+                        <td>{{ item.class_date }}</td>
+                        <td>{{ item.start_time }} - {{ item.end_time }}</td>
+                        <td class="muted">{{ item.status }}</td>
                     </tr>
                     <tr *ngIf="filteredSchedules.length === 0">
-                        <td colspan="5" class="empty">No sessions match the current filters.</td>
+                        <td colspan="5" class="empty">No schedules available for your semester.</td>
                     </tr>
                 </tbody>
             </table>
