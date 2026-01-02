@@ -1,7 +1,5 @@
 <nav class="navbar navbar-expand navbar-light navbar-bg">
-	<a class="sidebar-toggle js-sidebar-toggle">
-		<i class="hamburger align-self-center"></i>
-	</a>
+	<span class="header-left-username d-none d-md-inline-flex align-items-center ms-3">{{ greeting }}, <strong>{{ userName }}</strong></span>
 
 	<ul class="navbar-nav d-none d-lg-flex">
 	</ul>
@@ -14,13 +12,16 @@
 					<span class="time">{{ time }}</span>
 				</div>
 			</li>
-			<li class="nav-item dropdown">
+			<li class="nav-item nav-right-item ms-auto d-flex align-items-center">
 				<a class="nav-icon pe-md-0 dropdown-toggle" href="#" data-bs-toggle="dropdown">
-					<img src="/assets/images/user-avatar.png" class="avatar img-fluid rounded" alt="User">
+					<img [src]="avatarSrc" class="avatar img-fluid rounded" [alt]="userName">
 				</a>
 				<div class="dropdown-menu dropdown-menu-end">
-					<a class="dropdown-item" [routerLink]="getSettingsRoute()">Settings</a>
-					<a class="dropdown-item" routerLink="/admin/help">Help</a>
+					<div class="dropdown-item-text">
+						<strong>{{ userName }}</strong>
+					</div>
+					<div class="dropdown-divider"></div>
+					<a class="dropdown-item" [routerLink]="getSettingsRoute()">View Profile</a>
 					<div class="dropdown-divider"></div>
 					<a class="dropdown-item" (click)="logOut()">Logout</a>
 				</div>

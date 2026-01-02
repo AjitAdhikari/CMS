@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import StorageHelper from 'src/app/helpers/StorageHelper';
+import { UserService } from 'src/app/services/user.service';
 import { UserProfileView } from '../../setting.model';
 import { SettingService } from '../../setting.service';
 
@@ -19,7 +20,8 @@ export class AccountComponent implements OnInit {
   constructor(
     private toastr: ToastrService,
     private settingService: SettingService
-  ) {}
+    , private userService: UserService
+  ) { }
 
   ngOnInit(): void {
     const stored = StorageHelper.getLocalStorageItem('_user_details');
@@ -44,6 +46,7 @@ export class AccountComponent implements OnInit {
         profile.role = this.normalizeRole(profile.role);
         this.userProfile = profile;
         this.avatarPreview = profile.avatar || null;
+        this.userService.setUser(profile);
         this.loading = false;
       },
       error: (err) => {
@@ -66,11 +69,18 @@ export class AccountComponent implements OnInit {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length) {
       this.selectedAvatarFile = input.files[0];
-      
       // Show preview
       const reader = new FileReader();
       reader.onload = (e) => {
         this.avatarPreview = e.target?.result as string;
+        // update shared user state immediately so header shows preview
+        const cur = this.userService.current as UserProfileView | null;
+        const base = cur || this.userProfile || { id: this.currentUserId || '', name: '', email: '' } as any;
+        const updated: UserProfileView = {
+          ...base,
+          avatar: this.avatarPreview
+        } as UserProfileView;
+        this.userService.setUser(updated);
       };
       reader.readAsDataURL(this.selectedAvatarFile);
     }

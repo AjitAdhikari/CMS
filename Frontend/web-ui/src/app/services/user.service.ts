@@ -1,6 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, map } from 'rxjs';
+import { BehaviorSubject, Observable, map } from 'rxjs';
+import StorageHelper from 'src/app/helpers/StorageHelper';
+import { UserProfileView } from 'src/app/modules/setting/setting.model';
 import { environment } from 'src/environments/environment';
 
 export type UserRole = 'Admin' | 'Student' | 'Faculty';
@@ -19,7 +21,6 @@ export interface ApiUser {
   fees?: number | string | null;
 }
 
-// Frontend model used by the component
 export interface User {
   id: number | string;
   name: string;
@@ -36,10 +37,37 @@ export interface User {
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
+  private _user$ = new BehaviorSubject<UserProfileView | null>(null);
   private readonly baseUrl = `${environment.ApiUrl}/users`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    const raw = StorageHelper.getLocalStorageItem('_user_details');
+    if (raw) {
+      try {
+        this._user$.next(JSON.parse(raw));
+      } catch (e) { }
+    }
+  }
 
+  // reactive user state
+  get user$() {
+    return this._user$.asObservable();
+  }
+
+  get current() {
+    return this._user$.getValue();
+  }
+
+  setUser(user: UserProfileView | null) {
+    if (user) {
+      StorageHelper.setLocalStorageItem('_user_details', JSON.stringify(user));
+    } else {
+      StorageHelper.removeStorageItem('_user_details');
+    }
+    this._user$.next(user);
+  }
+
+  // CRUD for admin user-management
   list(): Observable<User[]> {
     return this.http.get<ApiUser[]>(this.baseUrl).pipe(map(users => users.map(u => this.toUser(u))));
   }
@@ -68,8 +96,8 @@ export class UserService {
       status: api.active_status === 0 ? 'Inactive' : 'Active',
       semester: api.semesters ? Number(api.semesters) : undefined,
       subjects: api.subjects || undefined,
-      department: api.department || undefined
-      ,fees: api.fees !== undefined && api.fees !== null ? Number(api.fees) : undefined
+      department: api.department || undefined,
+      fees: api.fees !== undefined && api.fees !== null ? Number(api.fees) : undefined
     };
   }
 

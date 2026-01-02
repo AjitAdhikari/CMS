@@ -1,84 +1,69 @@
-  <div class="card profile-card">
-    <div class="card-header">
-      <h5 class="card-title mb-0">My Profile</h5>
-    </div>
-    <div class="card-body">
-      <div *ngIf="loading" class="text-center">
-        <div class="spinner-border" role="status">
-          <span class="visually-hidden">Loading...</span>
-        </div>
+<div class="card profile-card">
+  <div class="card-header">
+    <h5 class="card-title mb-0">My Profile</h5>
+  </div>
+  <div class="card-body">
+    <div *ngIf="loading" class="text-center">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
       </div>
+    </div>
 
-      <ng-container *ngIf="!loading && userProfile">
-        <div class="profile-content">
-          <!-- Profile Photo Section -->
-          <div class="profile-photo-section">
-            <div class="profile-photo-container">
-              <img [src]="getAvatarSrc()"
-                   alt="Profile Photo"
-                   class="profile-photo">
-            </div>
-            <div class="photo-upload">
-              <input type="file" 
-                     #fileInput 
-                     (change)="onAvatarSelected($event)" 
-                     accept="image/*" 
-                     class="d-none">
-              <button type="button" 
-                      class="btn btn-sm btn-primary" 
-                      (click)="fileInput.click()" 
-                      [disabled]="loading">
-                Upload Photo
-              </button>
-              <button type="button" 
-                      class="btn btn-sm btn-success ms-2" 
-                      (click)="uploadPhoto()" 
-                      [disabled]="!selectedAvatarFile || loading"
-                      *ngIf="selectedAvatarFile">
-                Save Photo
-              </button>
-            </div>
+    <ng-container *ngIf="!loading && userProfile">
+      <div class="profile-content">
+        <!-- Profile Photo Section -->
+        <div class="profile-photo-section">
+          <div class="profile-photo-container">
+            <img [src]="getAvatarSrc()" alt="Profile Photo" class="profile-photo">
+          </div>
+          <div class="photo-upload">
+            <input type="file" #fileInput (change)="onAvatarSelected($event)" accept="image/*" class="d-none">
+            <button type="button" class="btn btn-sm btn-primary" (click)="fileInput.click()" [disabled]="loading">
+              Upload Photo
+            </button>
+            <button type="button" class="btn btn-sm btn-success ms-2" (click)="uploadPhoto()"
+              [disabled]="!selectedAvatarFile || loading" *ngIf="selectedAvatarFile">
+              Save Photo
+            </button>
+          </div>
+        </div>
+
+        <!-- Profile Info Section -->
+        <div class="profile-info-section">
+          <div class="profile-info-row">
+            <span class="info-label">Name:</span>
+            <span class="info-value">{{ userProfile.name }}</span>
           </div>
 
-          <!-- Profile Info Section -->
-          <div class="profile-info-section">
-            <div class="profile-info-row">
-              <span class="info-label">Name:</span>
-              <span class="info-value">{{ userProfile.name }}</span>
-            </div>
+          <div class="profile-info-row">
+            <span class="info-label">Email:</span>
+            <span class="info-value">{{ userProfile.email }}</span>
+          </div>
 
-            <div class="profile-info-row">
-              <span class="info-label">Email:</span>
-              <span class="info-value">{{ userProfile.email }}</span>
-            </div>
-
-            <div class="profile-info-row">
-              <span class="info-label">Role:</span>
-              <span class="info-value">
-                <span class="badge" 
-                      [ngClass]="{
+          <div class="profile-info-row">
+            <span class="info-label">Role:</span>
+            <span class="info-value">
+              <span class="badge" [ngClass]="{
                         'bg-primary': userProfile.role === 'student',
                         'bg-warning': userProfile.role === 'faculty',
                         'bg-danger': userProfile.role === 'admin'
                       }">
-                  {{ userProfile.role | titlecase }}
-                </span>
+                {{ userProfile.role | titlecase }}
               </span>
-            </div>
+            </span>
+          </div>
 
-            <div class="profile-info-row" *ngIf="isStudent() && userProfile.semesters">
-              <span class="info-label">Semester:</span>
-              <span class="info-value">{{ userProfile.semesters }}</span>
-            </div>
+          <div class="profile-info-row" *ngIf="isStudent() && userProfile.semesters">
+            <span class="info-label">Semester:</span>
+            <span class="info-value">{{ userProfile.semesters }}</span>
+          </div>
 
-            <div class="profile-info-row" *ngIf="isFaculty() && userProfile.subjects">
-              <span class="info-label">Subject Assigned:</span>
-              <span class="info-value">{{ userProfile.subjects }}</span>
-            </div>
+          <div class="profile-info-row" *ngIf="isFaculty() && userProfile.subjects">
+            <span class="info-label">Subject Assigned:</span>
+            <span class="info-value">{{ userProfile.subjects }}</span>
           </div>
         </div>
-      </ng-container>
-    </div>
+      </div>
+    </ng-container>
   </div>
-
-
+</div>

@@ -6,7 +6,7 @@
 
 nav.navbar {
 	position: relative;
-	height: 64px;
+	height: 92px;
 	background: var(--header-bg);
 	box-shadow: 0 1px 6px rgba(16,24,40,0.04);
 	padding: 0 18px;
@@ -17,8 +17,8 @@ nav.navbar {
 }
 
 .avatar {
-	width: 42px;
-	height: 42px;
+	width: 54px;
+	height: 54px;
 	object-fit: cover;
 }
 
@@ -45,11 +45,31 @@ nav.navbar {
 	left: auto;
 }
 
+
+.user-greeting {
+	color: #111827;
+	font-weight: 600;
+}
+
+.nav-right-item {
+	margin-left: auto;
+	gap: 8px;
+}
+
+.nav-right-item .user-greeting {
+	font-size: 0.98rem;
+}
+.header-left-username {
+	margin-left: 0;
+	font-size: 1rem;
+	font-weight: 600;
+}
+
 .hamburger {
-	width: 26px;
-	height: 20px;
-	border: 2px solid #333;
-	display: inline-block;
+	display: none;
+}
+.hamburger {
+	display: none;
 }
 
 .logout:hover {
