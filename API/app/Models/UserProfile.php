@@ -13,6 +13,7 @@ class UserProfile extends Model
         'subjects',
         'semesters',
         'avatar',
+        'department',
     ];
 
     public function user()

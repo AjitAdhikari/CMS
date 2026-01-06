@@ -60,6 +60,7 @@ class UserController extends Controller
                 'subjects' => 'nullable|string',
                 'semesters' => 'nullable|string',
                 'password' => 'required|string',
+                'department' => 'nullable|string',
                 'avatar' => 'nullable|file|max:10240', // optional for testing
             ]);
 
@@ -76,6 +77,7 @@ class UserController extends Controller
             $user_profile = new UserProfile();
             $user_profile->user_id = $last_inserted_id;
             $user_profile->role = $validated['role'];
+            $user_profile->department = $validated['department'];
 
             // handle optional avatar upload
             if ($request->hasFile('avatar')) {
@@ -130,6 +132,7 @@ class UserController extends Controller
             $user_profile->role = $validated['role'] ?? $user_profile->role;
             $user_profile->subjects = $validated['subjects'] ?? $user_profile->subjects;
             $user_profile->semesters = $validated['semesters'] ?? $user_profile->semesters;
+            $user_profile->department = $validated['department'] ?? $user_profile->department;
             $user_profile->updated_at = now();
             // handle optional avatar upload and save path
             if ($request->hasFile('avatar')) {
@@ -181,7 +184,8 @@ class UserController extends Controller
                     'user_profiles.role',
                     'user_profiles.avatar',
                     'user_profiles.subjects',
-                    'user_profiles.semesters'
+                    'user_profiles.semesters',
+                    'user_profiles.department',
                 )
                 ->first();
 
