@@ -16,11 +16,13 @@ class NoticeController extends Controller
             $validated = $request->validate([
                 'title' => 'required|string',
                 'description' => 'required|string',
+                'category' => 'required|string',
                 'notice_date' => 'required|string'
             ]);
 
             $entity = new Notice();
             $entity->title = $validated['title'];
+            $entity->category = $validated['category'];
             $entity->description = $validated['description'];
             $entity->notice_date = $validated['notice_date'];
             $entity->created_by = 1;
@@ -43,12 +45,14 @@ class NoticeController extends Controller
                 'id' => 'required|integer',
                 'title' => 'required|string',
                 'description' => 'required|string',
+                'category' => 'required|string',
                 'notice_date' => 'required|string'
             ]);
 
             $entity = Notice::findOrFail($validated['id']);
             $entity->title = $validated['title'] ?? $entity->title;
             $entity->description = $validated['description'] ?? $entity->description;
+            $entity->category = $validated['category'] ?? $entity->category;
             $entity->notice_date = $validated['notice_date'] ?? $entity->notice_date;
 
             $entity->updated_by = 1;
@@ -70,6 +74,12 @@ class NoticeController extends Controller
         try
         {
             $query = Notice::query();
+
+            if($request->has('category'))
+            {
+                $query->where('category', $request->category);
+            }
+
             $offset = $request->offset ?? 0;
             $limit = $request->limit ?? 10;
 
