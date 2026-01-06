@@ -114,6 +114,7 @@ class UserController extends Controller
                 'semesters' => 'nullable|string',
                 // 'password' => 'required|string',
                 'avatar' => 'nullable|file|max:10240', // optional for testing
+                'department' => 'nullable|string',
             ]);
 
             $entity = User::findOrFail($validated['id']);

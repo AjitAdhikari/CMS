@@ -27,13 +27,13 @@ class FeeController extends Controller
         try{
             $validated = $request->validate([
                 'user_id' => 'required|exists:users,id',
-                'semester' => 'required|string',
+                // 'semester' => 'required|string',
                 'total_fee' => 'required|integer'
             ]);
 
             $entity = new Fee();
             $entity->user_id = $validated['user_id'];
-            $entity->semester  = $validated['semester'];
+            $entity->semester  = 'none';
             $entity->total_fee = $validated['total_fee'];
             $entity->created_by = 1;
             $entity->save();

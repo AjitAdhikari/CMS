@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Course, CourseService } from '../../../../services/course.service';
 import { User, UserService } from '../../../../services/user.service';
+import { Fee, FeeService} from '../../../../services/fee.service';
 
 @Component({
   selector: 'app-user-management',
@@ -22,7 +23,11 @@ export class UserManagementComponent implements OnInit {
   loading = false;
   errorMessage = '';
 
-  constructor(private courseService: CourseService, private userService: UserService) { }
+  constructor(
+    private courseService: CourseService, 
+    private userService: UserService,
+    private feeService: FeeService
+  ) { }
 
   ngOnInit(): void {
     this.courseService.getCourses().subscribe({
@@ -131,12 +136,6 @@ export class UserManagementComponent implements OnInit {
     }
 
     const role = this.editing ? (t.roles && t.roles.length ? t.roles[0] : this.currentAddRole) : (this.currentAddRole || this.roleFilter);
-    if (role === 'Student') {
-      if ((t as any).semester === undefined || (t as any).semester === null) {
-        alert('Please select a semester for the student.');
-        return;
-      }
-    }
     if (role === 'Faculty') {
       if (!t.subjects) {
         alert('Please select a subject for the faculty.');
@@ -180,7 +179,15 @@ export class UserManagementComponent implements OnInit {
       };
 
       this.userService.create(payload).subscribe({
-          next: () => {
+          next: (res:any) => {
+            if(role === 'Student')
+            {
+              this.feeService.createFee({
+                user_id : res.user_id,
+                total_fee : t.fees || 0,
+                semester : 'All'
+              }).subscribe({next: (res : any) => (console.log(res))});
+            }
           this.loading = false;
           this.closeForm();
           this.loadUsers();

@@ -117,12 +117,12 @@
 
 			<!-- Student specific -->
 			<div *ngIf="currentAddRole === 'Student' || (editing && tempUser.roles?.includes('Student'))">
-				<div class="form-row">
+				<!-- <div class="form-row">
 					<label>Semester</label>
 					<select required [(ngModel)]="tempUser.semester">
 						<option *ngFor="let n of [1,2,3,4,5,6,7,8]" [ngValue]="n">Semester {{ n }}</option>
 					</select>
-				</div>
+				</div> -->
 				<div class="form-row">
 					<label>Department</label>
 					<select required [(ngModel)]="tempUser.department">
