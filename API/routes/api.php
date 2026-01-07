@@ -49,7 +49,10 @@ Route::prefix('fees')->group(function () {
     Route::get('/{user_id}', [FeeController::class, 'show']);
     Route::get('/details/{user_id}', [FeeController::class, 'show_fee_details']);
     Route::get('/', [FeeController::class, 'index']);
+    Route::get('/summary/{user_id}', [FeeController::class, 'fee_summary']);
 });
+
+
 //http://localhost:8000/api/notices
 Route::prefix('notices')->group(function () {
     Route::post('/', [NoticeController::class, 'create']);

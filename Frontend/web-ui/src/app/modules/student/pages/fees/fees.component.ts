@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { FeeService } from 'src/app/services/fee.service';
+import { UserProfileView } from 'src/app/modules/setting/setting.model';
+import { Fee, FeeService } from 'src/app/services/fee.service';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-fees',
@@ -15,15 +17,32 @@ export class FeesComponent implements OnInit {
   // Pagination
   pageSize: number = 10;
   currentPage: number = 1;
+  feeDetails: Fee[]  = [];
+  userProfile : UserProfileView | null = null;
+  totalFees : number  = 0;
 
-  constructor(private feeService: FeeService) { }
+  constructor(
+    private feeService: FeeService,
+    private _userService: UserService) { }
 
   ngOnInit(): void {
+    this.userProfile = this._userService.current;
     this.loadFeesData();
   }
 
   loadFeesData(): void {
     this.isLoading = true;
+    this.feeService.getFees(this.userProfile?.id).subscribe(
+      {
+        next:(res: any)=>{
+          this.feeDetails = res.data;
+          console.log(this.feeDetails);
+          this.totalFees = this.feeDetails[0].total_fee;
+        }
+      }
+    ); 
+    
+   
     // For the invoice-style view we populate mock invoice data here.
     // In a real app this should come from `FeeService` or an API.
     setTimeout(() => {

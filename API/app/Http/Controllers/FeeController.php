@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Fee;
 use App\Models\FeeDetail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class FeeController extends Controller
 {
@@ -205,6 +206,29 @@ class FeeController extends Controller
         }catch(\Exception $ex)
         {
             return response()->json(['error'=> $ex->getMessage()], 400);
+        }
+    }
+
+
+    public function fee_summary($userId)
+    {
+        try { 
+            $data = DB::table('fees as f')
+            ->leftJoin('fee_details as fd', 'f.user_id', '=', 'fd.user_id')
+            ->where('f.user_id', $userId)
+            ->select(
+                'f.total_fee as total_fee',
+                DB::raw('COALESCE(SUM(fd.amount), 0) as paid_amount'),
+                DB::raw('(f.total_fee - COALESCE(SUM(fd.amount), 0)) as remaining_amount')
+            )
+            ->groupBy('f.total_fee')
+            ->first(); // use get() if multiple rows expected
+            return response()->json([
+                'data' => $data
+            ], 200);
+
+        } catch(\Exception $ex) {
+            return response()->json(['error' => $ex->getMessage()], 400);
         }
     }
 }

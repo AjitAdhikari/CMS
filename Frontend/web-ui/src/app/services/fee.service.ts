@@ -37,12 +37,12 @@ export class FeeService {
   constructor(private http: HttpClient) { }
 
   // Get fees for a specific user
-  getFees(userId: number): Observable<Fee> {
+  getFees(userId: any): Observable<Fee> {
     return this.http.get<Fee>(`${this.apiUrl}/${userId}`);
   }
 
   // Get fee details for a specific user
-  getFeeDetails(userId: number): Observable<FeeDetail[]> {
+  getFeeDetails(userId: any): Observable<FeeDetail[]> {
     return this.http.get<FeeDetail[]>(`${this.apiUrl}/details/${userId}`);
   }
 
